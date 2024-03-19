@@ -1,0 +1,50 @@
+
+.AdminCard__inputs{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.AdminConfig__input{
+  width: 24%;
+
+  input:hover{
+    cursor: pointer;
+  }
+}
+
+.AdminConfig{
+  margin-top: 2%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.AdminConfig__column{
+  width: 24%;
+}
+.AdminConfig__row{
+  margin: 2% 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  background-color: rgba(0, 128, 0, 0.7);
+  border-radius: 10px/10px;
+  
+  text-align: center;
+
+  p{
+    width: 85%;
+  }
+  .AdminConfig__deleteButton{
+    transition: all .2s ease;
+    &:hover{
+      cursor: pointer;
+      transform: scale(1.2);
+    }
+  }
+}
+
+.AdminConfig_saveButton{
+  margin-top: 2%;
+}

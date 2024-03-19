@@ -1,0 +1,32 @@
+
+.AdminCard__inputs{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.AdminCard__input{
+  width: 49%;
+
+  input:hover{
+    cursor: pointer;
+  }
+}
+.AdminCard__input_cell{
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.AdminCard_addButton{
+  margin-top: 2%;
+}
+.AdminCard_saveButton{
+  margin-top: 2%;
+  background-color: green;
+}
+.AdminCard_deleteButton{
+  margin-top: 2%;
+  margin-left: 2%;
+  background-color: red;
+}
