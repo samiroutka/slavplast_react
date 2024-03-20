@@ -68,7 +68,6 @@ export const AdminCard = () => {
   let [configValidation, setConfigValidation] = useState()
 
   let alertRefs = {
-    'succses': useRef(),
     'validation': useRef(),
     'error': useRef(),
   }

@@ -4,9 +4,36 @@ import AddIcon from '@mui/icons-material/Add'
 import { Loader } from '@/components/Loader/Loader'
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './AdminConfig.module.scss'
-import {MyAlert, showAlert} from '@/components/Alert/MyAlert'
+import {MyAlert, showAlert, closeAlert} from '@/components/Alert/MyAlert'
 
 export const AdminConfig = () => {
+  
+  const AdminInput = React.forwardRef(({label, type, placeholder, unit}, ref) => {
+    return (
+      <div className={styles.AdminConfig__input}>
+        <TextField ref={ref} sx={{width: '100%'}} label={label} variant="filled" type={type} placeholder={placeholder}
+        InputProps={unit ? {
+          startAdornment: <InputAdornment position="start">{unit}</InputAdornment>,
+        } : {}}/>
+      </div>
+    )
+  })
+
+  const AdminColumn = ({type}) => { 
+    return (
+      <div className={styles.AdminConfig__column}>
+        {config[type] ? config[type].map(item => 
+          <div className={styles.AdminConfig__row} key={item['id']}>
+            <p>{item[type]}</p>
+            <DeleteIcon className={styles.AdminConfig__deleteButton} onClick={() => {deleteItem(item)}}/>
+          </div>
+        ): <span>-</span>}
+      </div>
+    )
+  }
+  
+  // -------------------------------------------------------------------------------
+
   let apiUrl = import.meta.env.VITE_APIURL
 
   let lengthRef = useRef()
@@ -15,6 +42,7 @@ export const AdminConfig = () => {
   let colorRef = useRef()
   
   let alertValidationRef = useRef()
+  let alertExistingNetRef = useRef()
 
   let [config, setConfig] = useState(false)
   let [isLoading, setIsLoading] = useState(false)
@@ -59,14 +87,19 @@ export const AdminConfig = () => {
     setIsLoading(false)
   }
 
-  let deleteItem = async (item) => {
+  let [itemForDelete, setItemForDelete] = useState()
+
+  let deleteItem = async (item, query) => {
     setIsLoading(true)
     let type = Object.keys(item)
     type.splice(type.indexOf('id'), 1)
     type = type[0]
-    let response = await fetch(`${apiUrl}/config/${type}/${item.id}`, {method: 'delete'})
+    let response = await fetch(`${apiUrl}/config/${type}/${item.id}${query ? query : ''}`, {method: 'delete'})
+    if (!await response.json()) {
+      showAlert(alertExistingNetRef.current, 4000)
+      setItemForDelete(item)
+    }
     await getConfig()
-    cleanFields()
     setIsLoading(false)
   }
 
@@ -81,62 +114,24 @@ export const AdminConfig = () => {
           {isLoading ? <Loader/> : false}
           <h1>Изменить конфигурацию</h1>
           <div className={styles.AdminCard__inputs}>
-            <div className={styles.AdminConfig__input}>
-              <TextField ref={lengthRef} sx={{width: '100%'}} label="Длина" variant="filled" type="number" placeholder='5' InputProps={{
-                  startAdornment: <InputAdornment position="start">м</InputAdornment>,
-              }}/>
-            </div>
-            <div className={styles.AdminConfig__input}>
-              <TextField ref={widthRef} sx={{width: '100%'}} label="Ширина" variant="filled" type="number" placeholder='3' InputProps={{
-                  startAdornment: <InputAdornment position="start">м</InputAdornment>,
-              }}/>
-            </div>
-            <div className={styles.AdminConfig__input}>
-              <TextField ref={cellRef} sx={{width: '100%'}} label="Размер ячейки" variant="filled" type="string" placeholder='10x15' InputProps={{
-                  startAdornment: <InputAdornment position="start">мм</InputAdornment>,
-              }}/>
-            </div>          
-            <div className={styles.AdminConfig__input}>
-              <TextField ref={colorRef} sx={{width: '100%'}} label="Цвет" variant="filled" type="string" placeholder='зеленый'/>
-            </div>
+            <AdminInput ref={lengthRef} label='Длина' type='number' placeholder='8' unit='м'/>
+            <AdminInput ref={widthRef} label='Ширина' type='number' placeholder='5' unit='м'/>
+            <AdminInput ref={cellRef} label='Ячейка' type='string' placeholder='15x10' unit='мм'/>
+            <AdminInput ref={colorRef} label='Цвет' type='string' placeholder='красный'/>
           </div>
           <div className={styles.AdminConfig}>
-              <div className={styles.AdminConfig__column}>
-                {config['length'] ? config['length'].map(item => 
-                  <div className={styles.AdminConfig__row} key={item.id}>
-                    <p>{item.length}</p>
-                    <DeleteIcon className={styles.AdminConfig__deleteButton} onClick={() => {deleteItem(item)}}/>
-                  </div>
-                ): <span>-</span>}
-              </div>
-              <div className={styles.AdminConfig__column}>
-                {config['width'] ? config['width'].map(item => 
-                  <div className={styles.AdminConfig__row} key={item.id}>
-                    <p>{item.width}</p>
-                    <DeleteIcon className={styles.AdminConfig__deleteButton} onClick={() => {deleteItem(item)}}/>
-                  </div>
-                ): <span>-</span>}
-              </div>
-              <div className={styles.AdminConfig__column}>
-                {config['cell'] ? config['cell'].map(item => 
-                  <div className={styles.AdminConfig__row} key={item.id}>
-                    <p>{item.cell}</p>
-                    <DeleteIcon className={styles.AdminConfig__deleteButton} onClick={() => {deleteItem(item)}}/>
-                  </div>
-                ): <span>-</span>}
-              </div>
-              <div className={styles.AdminConfig__column}>
-                {config['color'] ? config['color'].map(item => 
-                  <div className={styles.AdminConfig__row} key={item.id}>
-                    <p>{item.color}</p>
-                    <DeleteIcon className={styles.AdminConfig__deleteButton} onClick={() => {deleteItem(item)}}/>
-                  </div>
-                ): <span>-</span>}
-              </div>
+            <AdminColumn type='length'/>
+            <AdminColumn type='width'/>
+            <AdminColumn type='cell'/>
+            <AdminColumn type='color'/>
           </div>
           <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminConfig_saveButton} onClick={addConfig}>Добавить</Button>
         </>}
         <MyAlert ref={alertValidationRef} severity="info">Заполните хотя бы одно поле</MyAlert>
+        <MyAlert ref={alertExistingNetRef} severity="info" actionText='уверен(а)' actionCallback={async () => {
+          await deleteItem(itemForDelete, `?force=${true}`)
+          closeAlert(alertExistingNetRef.current)
+          }}>С этой конфигурацией уже есть сетк(а/и). Вы уверены что хотите удалить сетк(а/и) с этой конфигурацией</MyAlert>
     </section>
   )
 }
