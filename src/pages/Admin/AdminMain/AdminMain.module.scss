@@ -1,0 +1,32 @@
+
+
+:root{
+  --blue: #1976d2;
+}
+
+.AdminMain__TabsList{
+  margin: 0 auto;
+  margin-top: 2%;
+  width: 40%;
+  display: flex;
+}
+.AdminMain__Tab{
+  padding: 0;
+  width: 50%;
+
+  font-size: 1.5em;
+
+  border: 0;
+  background-color: transparent;
+
+  &[aria-selected='true'] .AdminMain__TabButton{
+    background-color: var(--blue);
+    color: white;
+    letter-spacing: .2em;
+    transform: scale(1.1);
+  }
+}
+.AdminMain__TabButton{
+  width: 100%;
+  transition: all .2s ease;
+}

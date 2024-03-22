@@ -1,18 +1,22 @@
 
-.Admin__addNet, .Admin__changeConfig{
-  margin-top: 2%;
+
+.AdminNets__netTitle{
+  text-align: center;
 }
 
-.Admin__changeConfig{
+.AdminNets__addNet, .AdminNets__changeConfig{
+  margin-top: 2%;
+}
+.AdminNets__changeConfig{
   margin-left: 2%;
 }
 
-.Admin_nets{
+.AdminNets__nets{
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-.Admin_net, .Admin_net_titles{
+.AdminNets__net, .AdminNets__net_titles{
   margin: 0 auto;
   margin-bottom: 1%;
   width: 95%;
@@ -28,11 +32,11 @@
     text-align: center;
   }
 }
-.Admin_net:hover{
+.AdminNets__net:hover{
   cursor: pointer;
   transform: scale(1.02);
   box-shadow: 0 0 5px;
 }
-.Admin_net_titles{
+.AdminNets__net_titles{
   background-color: rgba(45, 199, 3, .8);
 }

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Header } from '@/components/Header/Header'
-import styles from './Main.module.scss'
+import styles from './MainMain.module.scss'
 import net1 from './images/net1.jpg'
 import net2 from './images/net2.jpg'
 import { useNavigate } from 'react-router'
 
-export const Main = () => {
+export const MainMain = () => {
   let navigateTo = useNavigate()
 
   return (

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import styles from './AdminNets.module.scss'
+import {Loader} from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
-import styles from './Admin.module.scss'
 import {Button} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import { Loader } from '@/components/Loader/Loader';
 
-export const Admin = () => {
+export const AdminNets = ({type}) => {
   let apiUrl = import.meta.env.VITE_APIURL
   let navigateTo = useNavigate()
+ 
   let [nets, setNets] = useState()
   let [config, setConfig] = useState()
 
@@ -37,19 +38,20 @@ export const Admin = () => {
     <section>
       {!(config && nets) ? <Loader/> :
         <>
-          <Button variant='contained' startIcon={<AddIcon/>} className={styles.Admin__addNet} onClick={() => navigateTo('/admin/card/add')}>Добавить сетку</Button>
-          <Button variant='outlined' startIcon={<EditIcon/>} className={styles.Admin__changeConfig} onClick={() => navigateTo('/admin/config')}>Изменить конфигурацию</Button>
-          <h1>Сетки</h1>
+          <h1>{type == 'plastic' ? 'Пластиковая' : type == 'knotless' ? 'Безузелковая' : ''}</h1>
+          <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo('/admin/card/add')}>Добавить сетку</Button>
+          <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo('/admin/config')}>Изменить конфигурацию</Button>
+          <h3 className={styles.AdminNets__netTitle}>Сетки</h3>
           {nets.length != 0 ?
-            <div className={styles.Admin_nets}>
-              <div className={styles.Admin_net_titles}>
+            <div className={styles.AdminNets__nets}>
+              <div className={styles.AdminNets__net_titles}>
                 <p>длина</p>
                 <p>ширина</p>
                 <p>ячейки</p>
                 <p>цвет</p>
               </div>
               {nets.map(net => 
-                <div className={styles.Admin_net} key={net.id} onClick={() => {navigateTo(`/admin/card/${net.id}`)}}>
+                <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/card/${net.id}`)}}>
                   <p>{getNetData_byConfig(config, net, 'length')}</p>
                   <p>{getNetData_byConfig(config, net, 'width')}</p>
                   <p>{getNetData_byConfig(config, net, 'cell')}</p>
