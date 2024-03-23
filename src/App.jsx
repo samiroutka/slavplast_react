@@ -18,10 +18,13 @@ function App() {
     <StyledEngineProvider injectFirst>
       <BrowserRouter> 
         <Routes>
-          <Route path="/admin/config" element={<AdminConfig/>}/>
-          <Route path="/admin/card/add" element={<AdminCard/>}/>
-          <Route path="/admin/card/:id" element={<AdminCard/>}/>
-          <Route path="/admin" element={<AdminMain/>}/>
+          <Route path="/admin/:netType" element={<AdminMain/>}/>
+          <Route path="/admin/:netType" element={<AdminMain/>}/>
+          <Route path="/admin/:netType/config" element={<AdminConfig/>}/>
+          <Route path="/admin/:netType/config" element={<AdminConfig/>}/>
+          <Route path="/admin/:netType/card/add" element={<AdminCard/>}/>
+          <Route path="/admin/:netType/card/:id" element={<AdminCard/>}/>
+          {/* --------------------------------------------------------------- */}
           <Route path="/" element={<MainMain/>}/>
           <Route path="/Sorting/:type" element={<Sorting/>}/>
           {/* <Route path="/product/:type" element={<Product/>}/> */}

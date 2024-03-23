@@ -31,6 +31,7 @@ const AdminCardInput = ({variants, net, config}) => {
     'width': 'Ширина',
     'cell': 'Ячейка',
     'color': 'Цвет',
+    'thickness': 'Толщина',
   }
   let input_id = `${current_variantKey}`
   let [selectValue, setSelectValue] = useState(net ? netVariantId : '')
@@ -61,6 +62,7 @@ const AdminCardInput = ({variants, net, config}) => {
 
 export const AdminCard = () => {
   let {id} = useParams()
+  let {netType} = useParams()
   let apiUrl = import.meta.env.VITE_APIURL
   let navigateTo = useNavigate()
   let [net, setNet] = useState()
@@ -73,7 +75,7 @@ export const AdminCard = () => {
   }
 
   let getNet = async () => {
-    let response = await fetch(`${apiUrl}/net/${id}`)
+    let response = await fetch(`${apiUrl}/net/${netType}/${id}`)
     response.ok ? setNet(await response.json()) : showAlert(alertRefs['error'].current)
   }
 
@@ -83,7 +85,7 @@ export const AdminCard = () => {
   }
 
   let getConfig = async () => {
-    let response = await fetch(`${apiUrl}/config`)
+    let response = await fetch(`${apiUrl}/config/${netType}`)
     let responseData = await response.json()
     response.ok ? setConfig(responseData) : setConfig(false)
     setConfigValidation(Boolean(Object.keys(responseData).length == 4))
@@ -105,17 +107,17 @@ export const AdminCard = () => {
       showAlert(alertRefs['validation'].current)
       return false
     }
-    let response = await fetch(type == 'add' ? `${apiUrl}/net` : `${apiUrl}/net/${id}`, {
+    let response = await fetch(type == 'add' ? `${apiUrl}/net/${netType}` : `${apiUrl}/net/${netType}/${id}`, {
       method: type == 'add' ? 'post' : 'put',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(getValues())
     })
-    response.ok ? navigateTo('/admin') : showAlert(alertRefs['error'].current)
+        response.ok ? navigateTo(`/admin/${netType}`) : showAlert(alertRefs['error'].current)
   }
 
   let deleteNet = async () => {
-    let respose = await fetch(`${apiUrl}/net/${id}`, {method: 'delete'})
-    respose.ok ? navigateTo('/admin') : showAlert(alertRefs['error'].current)
+    let respose = await fetch(`${apiUrl}/net/${netType}/${id}`, {method: 'delete'})
+    respose.ok ? navigateTo(`/admin/${netType}`) : showAlert(alertRefs['error'].current)
   }
 
   useEffect(() => {
@@ -132,7 +134,7 @@ export const AdminCard = () => {
           {!id ? 
             config && configValidation ? Object.keys(config).map(item => 
               <AdminCardInput key={getVariantKey(config[item][0])} variants={config[item]}/>
-            ) : <p>Добавьте варианты в <a href="/admin/config">конфигурации</a></p>
+            ) : <p>Добавьте варианты в <a href={`/admin/${netType}/config`}>конфигурации</a></p>
           : net ? Object.keys(deleteId_fromNet(net)).map(item => 
             <AdminCardInput key={item} variants={config[item]} net={deleteId_fromNet(net)} config={config}/>
           ) : <></>}

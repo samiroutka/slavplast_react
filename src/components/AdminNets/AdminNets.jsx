@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router';
 import styles from './AdminNets.module.scss'
 import {Loader} from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
@@ -6,19 +7,20 @@ import {Button} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
-export const AdminNets = ({type}) => {
+export const AdminNets = () => {
   let apiUrl = import.meta.env.VITE_APIURL
+  let {netType} = useParams()
   let navigateTo = useNavigate()
  
   let [nets, setNets] = useState()
   let [config, setConfig] = useState()
 
   let getNets = async () => {
-    let response = await fetch(`${apiUrl}/nets`)
+    let response = await fetch(`${apiUrl}/nets/${netType}`)
     setNets(await response.json())
   }
   let getConfig = async () => {
-    let response = await fetch(`${apiUrl}/config`)
+    let response = await fetch(`${apiUrl}/config/${netType}`)
     setConfig(await response.json())
   }
   let getData_wrapper = async () => {
@@ -26,21 +28,26 @@ export const AdminNets = ({type}) => {
     await getConfig()
   }
 
-  let getNetData_byConfig = (config, net, type) => {
+  let getNetData_byConfig = (net, type) => {
     return config[type].filter(item => item.id == net[type])[0][type]
   }
 
   useEffect(() => {
     getData_wrapper()
+    // На изменение url обнуляет config и занова запрашивает его
+    window.navigation.addEventListener("navigate", async (event) => {
+      setConfig(false)
+      await getData_wrapper()
+    })
   }, [])
-
+  
   return (
     <section>
       {!(config && nets) ? <Loader/> :
         <>
-          <h1>{type == 'plastic' ? 'Пластиковая' : type == 'knotless' ? 'Безузелковая' : ''}</h1>
-          <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo('/admin/card/add')}>Добавить сетку</Button>
-          <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo('/admin/config')}>Изменить конфигурацию</Button>
+          <h1>{netType == 'plastic' ? 'Пластиковая' : netType == 'knotless' ? 'Безузелковая' : ''}</h1>
+          <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo(`/admin/${netType}/card/add`)}>Добавить сетку</Button>
+          <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo(`/admin/${netType}/config`)}>Изменить конфигурацию</Button>
           <h3 className={styles.AdminNets__netTitle}>Сетки</h3>
           {nets.length != 0 ?
             <div className={styles.AdminNets__nets}>
@@ -48,14 +55,22 @@ export const AdminNets = ({type}) => {
                 <p>длина</p>
                 <p>ширина</p>
                 <p>ячейки</p>
-                <p>цвет</p>
+                {netType == 'plastic' ? 
+                  <p>цвет</p>  
+                : netType == 'knotless' ? 
+                  <p>толщина</p>
+                : <></>}
               </div>
               {nets.map(net => 
-                <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/card/${net.id}`)}}>
-                  <p>{getNetData_byConfig(config, net, 'length')}</p>
-                  <p>{getNetData_byConfig(config, net, 'width')}</p>
-                  <p>{getNetData_byConfig(config, net, 'cell')}</p>
-                  <p>{getNetData_byConfig(config, net, 'color')}</p>
+                <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/${netType}/card/${net.id}`)}}>
+                  <p>{getNetData_byConfig(net, 'length')}</p>
+                  <p>{getNetData_byConfig(net, 'width')}</p>
+                  <p>{getNetData_byConfig(net, 'cell')}</p>
+                  {netType == 'plastic' ? 
+                    <p>{getNetData_byConfig(net, 'color')}</p>  
+                  : netType == 'knotless' ? 
+                    <p>{getNetData_byConfig(net, 'thickness')}</p>
+                  : <></>}
                 </div>
               )}
             </div>
