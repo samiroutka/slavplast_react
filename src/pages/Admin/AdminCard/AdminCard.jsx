@@ -2,60 +2,30 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useLocation } from 'react-router';
 import { useNavigate } from 'react-router'
 import styles from './AdminCard.module.scss'
-import {Button} from '@mui/material'
-import {TextField, InputAdornment, Select, MenuItem, FormControl, InputLabel, Alert, 
-CircularProgress} from '@mui/material'
+import { Button } from '@mui/material'
+import { AdminCardInput } from '@/components/AdminCardInput/AdminCardInput';
+import { Slider } from '@/components/Slider/Slider.jsx'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
 import { Loader } from '@/components/Loader/Loader';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { MyAlert, showAlert } from '@/components/Alert/MyAlert';
+import noimage from './noimage.png'
 
 let getVariantKey = (variant) => {
   let new_variant = {...variant}
   delete new_variant['id']
+  delete new_variant['images']
   return Object.keys(new_variant)[0]
 }
 
 let deleteId_fromNet = (net) => {
   let new_net = {...net}
   delete new_net['id']
+  delete new_net['images']
   return new_net
-}
-
-const AdminCardInput = ({variants, net, config}) => {
-  let current_variantKey = getVariantKey(variants[0])
-  let netVariantId = net ? config[current_variantKey].filter(variant => variant.id == net[current_variantKey])[0]['id'] : null
-  let labels = {
-    'length': 'Длина',
-    'width': 'Ширина',
-    'cell': 'Ячейка',
-    'color': 'Цвет',
-    'thickness': 'Толщина',
-  }
-  let input_id = `${current_variantKey}`
-  let [selectValue, setSelectValue] = useState(net ? netVariantId : '')
-  const handleChange = (event) => {
-    setSelectValue(event.target.value);
-  };
-
-  return (
-    <div className={styles.AdminCard__input}>
-      <FormControl sx={{width: '100%'}} variant="filled">
-        <InputLabel id={input_id}>{labels[current_variantKey]}</InputLabel>
-        <Select
-          labelId={`${input_id}_label`}
-          id={input_id}
-          value={selectValue}
-          onChange={handleChange}
-        >
-          {variants.map(variant => 
-              <MenuItem key={variant.id} value={variant.id}>{variant[getVariantKey(variant)]}</MenuItem>
-          )}
-        </Select>
-      </FormControl>
-    </div>
-  )
 }
 
 // -----------------------------------------------------
@@ -65,9 +35,11 @@ export const AdminCard = () => {
   let {netType} = useParams()
   let apiUrl = import.meta.env.VITE_APIURL
   let navigateTo = useNavigate()
+  let [loading, setLoading] = useState(false)
   let [net, setNet] = useState()
   let [config, setConfig] = useState()
   let [configValidation, setConfigValidation] = useState()
+  let [images, setImages] = useState([])
 
   let alertRefs = {
     'validation': useRef(),
@@ -76,7 +48,9 @@ export const AdminCard = () => {
 
   let getNet = async () => {
     let response = await fetch(`${apiUrl}/net/${netType}/${id}`)
-    response.ok ? setNet(await response.json()) : showAlert(alertRefs['error'].current)
+    let net_data = await response.json()
+    response.ok ? setNet(net_data) : showAlert(alertRefs['error'].current)
+    setImages(net_data['images'])
   }
 
   let getData_wrapper = async () => {
@@ -98,6 +72,7 @@ export const AdminCard = () => {
       if (!value) {return false}
       values[input.querySelector('label').id] = value
     }
+    values['images'] = images
     return values
   }
 
@@ -110,9 +85,9 @@ export const AdminCard = () => {
     let response = await fetch(type == 'add' ? `${apiUrl}/net/${netType}` : `${apiUrl}/net/${netType}/${id}`, {
       method: type == 'add' ? 'post' : 'put',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(getValues())
+      body: JSON.stringify(values)
     })
-        response.ok ? navigateTo(`/admin/${netType}`) : showAlert(alertRefs['error'].current)
+    response.ok ? navigateTo(`/admin/${netType}`) : showAlert(alertRefs['error'].current)
   }
 
   let deleteNet = async () => {
@@ -120,24 +95,75 @@ export const AdminCard = () => {
     respose.ok ? navigateTo(`/admin/${netType}`) : showAlert(alertRefs['error'].current)
   }
 
+  let uploadFile = async (event) => {
+    setLoading(true)
+    let formData = new FormData
+    formData.append('file', event.target.files[0])
+    let response = await fetch(`${apiUrl}/file`, {
+      method: 'post',
+      body: formData
+    })
+    let newImage = await response.json()
+    setImages([...images, `${apiUrl}/${newImage}`])
+    setLoading(false)
+  }
+
+  let deleteImage = async (event) => {
+    setLoading(true)
+    let filepath = event.currentTarget.parentElement.querySelector('img').src
+    let filename = filepath.replace(`${apiUrl}/file/`, '')
+    let new_images = [...images]
+    new_images.splice(new_images.indexOf(filepath), 1)
+    setImages(new_images)
+    if (location.pathname.includes('add')) { // логика если страница добавления сетки
+      await fetch(`${apiUrl}/file/${filename}`, {method: 'delete'})
+    }
+    setLoading(false)
+  }
+
   useEffect(() => {
     getData_wrapper()
   }, [])
+
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
   return (
     <>
     {id && !net ? <Loader/> : !config ? <Loader/>
     :
       <section className={styles.AdminCard}>
+        {loading ? <Loader/> : <></>}
         <h1>Добавить сетку</h1>
+        {configValidation ?
+          <div className={styles.AdminCard__imagesWrapper}>
+            {images.length > 0 ?
+              <Slider className={styles.AdminCard__slider} images={images} deleteCallback={deleteImage}/>  
+            : <img className={styles.AdminCard_noimage} src={noimage}/>}
+            <Button className={styles.AdminCard_uploadFile} component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+              Добавить фото
+              <VisuallyHiddenInput onChange={uploadFile} type="file" accept="image/*"/>
+            </Button>
+          </div> : <></>}
         <div className={styles.AdminCard__inputs}>
-          {!id ? 
-            config && configValidation ? Object.keys(config).map(item => 
-              <AdminCardInput key={getVariantKey(config[item][0])} variants={config[item]}/>
-            ) : <p>Добавьте варианты в <a href={`/admin/${netType}/config`}>конфигурации</a></p>
-          : net ? Object.keys(deleteId_fromNet(net)).map(item => 
-            <AdminCardInput key={item} variants={config[item]} net={deleteId_fromNet(net)} config={config}/>
-          ) : <></>}
+          {id ?
+            Object.keys(deleteId_fromNet(net)).map(item => 
+              <AdminCardInput key={item} variants={config[item]} net={deleteId_fromNet(net)} config={config} getVariantKey={getVariantKey}/>
+            )
+          : configValidation ?
+              Object.keys(config).map(item => 
+                <AdminCardInput key={getVariantKey(config[item][0])} variants={config[item]} getVariantKey={getVariantKey}/>
+              )
+            : <p>Добавьте варианты в <a href={`/admin/${netType}/config`}>конфигурации</a></p>}
         </div>
         <MyAlert ref={alertRefs['validation']} severity="info">Заполните все поля</MyAlert>
         <MyAlert ref={alertRefs['error']} severity="error">Что-то пошло не так</MyAlert>

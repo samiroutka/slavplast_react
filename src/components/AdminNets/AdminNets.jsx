@@ -52,24 +52,26 @@ export const AdminNets = () => {
           {nets.length != 0 ?
             <div className={styles.AdminNets__nets}>
               <div className={styles.AdminNets__net_titles}>
-                <p>длина</p>
-                <p>ширина</p>
-                <p>ячейки</p>
+                <p className={styles.AdminNet__netField}>фото</p>
+                <p className={styles.AdminNet__netField}>длина</p>
+                <p className={styles.AdminNet__netField}>ширина</p>
+                <p className={styles.AdminNet__netField}>ячейки</p>
                 {netType == 'plastic' ? 
-                  <p>цвет</p>  
+                  <p className={styles.AdminNet__netField}>цвет</p>  
                 : netType == 'knotless' ? 
-                  <p>толщина</p>
+                  <p className={styles.AdminNet__netField}>толщина</p>
                 : <></>}
               </div>
               {nets.map(net => 
                 <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/${netType}/card/${net.id}`)}}>
-                  <p>{getNetData_byConfig(net, 'length')}</p>
-                  <p>{getNetData_byConfig(net, 'width')}</p>
-                  <p>{getNetData_byConfig(net, 'cell')}</p>
+                  <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : ''}/>
+                  <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'length')}</p>
+                  <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'width')}</p>
+                  <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'cell')}</p>
                   {netType == 'plastic' ? 
-                    <p>{getNetData_byConfig(net, 'color')}</p>  
+                    <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'color')}</p>  
                   : netType == 'knotless' ? 
-                    <p>{getNetData_byConfig(net, 'thickness')}</p>
+                    <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'thickness')}</p>
                   : <></>}
                 </div>
               )}

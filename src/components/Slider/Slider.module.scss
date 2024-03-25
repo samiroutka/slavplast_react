@@ -1,0 +1,32 @@
+
+.Slider{
+  margin: 0 !important;
+
+  border-radius: 10px;
+  overflow: hidden;
+
+  img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.Slider__slider{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.Slider__deleteButton{
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  transform: scale(1.5);
+
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.Slider__deleteButton{
+  color: rgb(170, 0, 0);
+}

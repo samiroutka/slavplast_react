@@ -1,4 +1,20 @@
 
+.AdminCard__imagesWrapper{
+  margin-bottom: 2%;
+  display: flex;
+  img{
+    object-fit: contain;
+  }
+}
+.AdminCard_uploadFile{
+  margin-left: 2%;
+  align-self: end;
+}
+.AdminCard__slider, .AdminCard_noimage{
+  width: 48%;
+  height: 30vw;
+}
+
 .AdminCard__inputs{
   width: 100%;
   display: flex;

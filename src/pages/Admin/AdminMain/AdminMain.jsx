@@ -19,8 +19,8 @@ export const AdminMain = () => {
   return (
     <Tabs className={styles.AdminMain__Tabs} defaultValue={'plastic'}>
       <TabsList className={styles.AdminMain__TabsList}>
-        <Tab ref={plasticTabRef} className={styles.AdminMain__Tab} value={'plastic'}><Button className={styles.AdminMain__TabButton} onClick={() => {navigateTo('/admin/plastic')}} variant="outlined">Пластиковая</Button></Tab>
-        <Tab ref={knotlessTabRef} className={styles.AdminMain__Tab} value={'knotless'}><Button className={styles.AdminMain__TabButton} onClick={() => {navigateTo('/admin/knotless')}} variant="outlined">Безузелковая</Button></Tab>
+        <Tab ref={plasticTabRef} className={styles.AdminMain__Tab} value={'plastic'}><Button component='div' className={styles.AdminMain__TabButton} onClick={() => {navigateTo('/admin/plastic')}} variant="outlined">Пластиковая</Button></Tab>
+        <Tab ref={knotlessTabRef} className={styles.AdminMain__Tab} value={'knotless'}><Button component='div' className={styles.AdminMain__TabButton} onClick={() => {navigateTo('/admin/knotless')}} variant="outlined">Безузелковая</Button></Tab>
       </TabsList> 
       <TabPanel value={'plastic'}><AdminNets/></TabPanel>
       <TabPanel value={'knotless'}><AdminNets/></TabPanel>
