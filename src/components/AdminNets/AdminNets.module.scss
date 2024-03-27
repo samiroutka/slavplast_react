@@ -20,12 +20,14 @@
   margin: 0 auto;
   margin-bottom: 1%;
   width: 95%;
-  max-height: 10vw;
+  height: 10vw;
   box-sizing: border-box;
   display: flex;
   justify-content: space-around;
   align-items: center;
   
+  font-size: 1.2em;
+
   background-color: rgba(45, 199, 3, .3);
   border-radius: 10px;
   transition: all .2s ease;
@@ -36,12 +38,15 @@
     text-align: center;
   }
   img.AdminNet__netField{
-    padding: 1%;
+    padding: .7%;
+    height: 100%;
     width: var(--field-width);
+    object-fit: contain;
     box-sizing: border-box;
-
-    border-radius: 20px;
   }
+}
+.AdminNets__net_titles{
+  height: 5vw;
 }
 .AdminNets__net:hover{
   cursor: pointer;

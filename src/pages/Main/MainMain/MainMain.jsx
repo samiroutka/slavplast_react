@@ -12,7 +12,7 @@ export const MainMain = () => {
     <div className={styles.Main}>
       <Header/>
       <section className={styles.Main__products}>
-        <div className={styles.Main__product} onClick={() => {navigateTo(`/sorting/knot`)}}>
+        <div className={styles.Main__product} onClick={() => {navigateTo(`/sorting/plastic`)}}>
           <img src={net1} alt="" />
           <p>Пластиковая сетка</p>
         </div>

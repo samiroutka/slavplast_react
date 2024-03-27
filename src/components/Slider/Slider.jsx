@@ -21,16 +21,14 @@ export const Slider = (props) => {
     pagination={{ clickable: true }}
     onSwiper={() => {}}
     onSlideChange={() => {}}>
-      {images.map(image => 
-        <SwiperSlide className={styles.Slider__slider} key={images.indexOf(image)+Math.round(Math.random()*10)}>
+      {images.map((image, index) => 
+        <SwiperSlide className={styles.Slider__slider} key={index}>
           <img src={image} alt=""/>
           {deleteCallback ? 
             <Button className={styles.Slider__deleteButton} onClick={deleteCallback}><DeleteRoundedIcon className={styles.Slider__deleteIcon}/></Button>
           : <></>}
         </SwiperSlide>
       )}
-      {/* <SwiperSlide><img src='http://localhost:5000/file/tomb_raider.jpg' alt="" /></SwiperSlide> */}
-      {/* <SwiperSlide><img src='http://localhost:5000/file/tomb_raider.jpg' alt="" /></SwiperSlide> */}
     </Swiper>
   )
 } 

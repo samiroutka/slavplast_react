@@ -1,42 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useParams, useLocation } from 'react-router';
 import styles from './Sorting.module.scss'
 import { Header } from '@/components/Header/Header';
 import test_img from './images/test_img.jpg'
+import { Loader } from '@/components/Loader/Loader.jsx'
 
 export const Sorting = () => {
+  let apiUrl = import.meta.env.VITE_APIURL
+  let {netType} = useParams()
   let navigateTo = useNavigate()  
-  let {type} = useParams()
-  let cells = [
-    '5x5',
-    '5x5',
-    '6x6',
-    '6x6',
-    '10x10',
-    '10x10',
-    '11x11',
-    '11x11',
-    '12x12',
-    '12x12',
-    '13x13',
-    '13x13',
-    '15x15',
-  ]
-
+  let [cells, setCells] = useState()
+  
+  let getCells = async () => {
+    let response = await fetch(`${apiUrl}/cells/${netType}`)
+    setCells(await response.json())
+  }
+  
+  useEffect(() => {
+    getCells()
+  }, [])
+  
   return (
     <>
       <Header/>
-      <section className={styles.Sorting}>
-        {cells.map(cell => { return(
-          <div className={styles.Sorting__element} onClick={() => {
-            navigateTo(`/cards/${cell}`)
-          }}>
-            <img src={test_img} alt="" />
-            <p>{cell}</p>
-          </div>
-        )})}
-      </section>
+      {!cells ? <Loader/> :
+        cells.length > 0 ? 
+        <section className={styles.Sorting}>
+          {cells.map(cell => 
+            <div className={styles.Sorting__element} key={cell.id} onClick={() => {
+              navigateTo(`/cards/${netType}/${cell.id}/${cell.cell}`)
+            }}>
+              <img src={test_img} alt="" />
+              <p>{cell.cell}</p>
+            </div>  
+          )}
+        </section> : <p>Никаких ячеек пока нету (</p>}
     </>
   )
 }

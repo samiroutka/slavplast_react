@@ -26,9 +26,8 @@ function App() {
           <Route path="/admin/:netType/card/:id" element={<AdminCard/>}/>
           {/* --------------------------------------------------------------- */}
           <Route path="/" element={<MainMain/>}/>
-          <Route path="/Sorting/:type" element={<Sorting/>}/>
-          {/* <Route path="/product/:type" element={<Product/>}/> */}
-          <Route path="/cards/:card" element={<Card/>}/>
+          <Route path="/Sorting/:netType" element={<Sorting/>}/>
+          <Route path="/cards/:netType/:cellId/:cell" element={<Card/>}/>
           <Route path="/basket" element={<Basket/>}/>
         </Routes>
       </BrowserRouter>
