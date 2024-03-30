@@ -64,7 +64,7 @@ export const AdminNets = () => {
               </div>
               {nets.map(net => 
                 <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/${netType}/card/${net.id}`)}}>
-                  <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : ''}/>
+                  <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : ''} alt='-'/>
                   <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'length')}</p>
                   <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'width')}</p>
                   <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'cell')}</p>
