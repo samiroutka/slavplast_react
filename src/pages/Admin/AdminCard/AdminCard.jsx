@@ -3,7 +3,8 @@ import { useParams, useLocation } from 'react-router';
 import { useNavigate } from 'react-router'
 import styles from './AdminCard.module.scss'
 import { Button } from '@mui/material'
-import { AdminCardInput } from '@/components/AdminCardInput/AdminCardInput';
+import { AdminCardSelect } from '@/components/AdminCardSelect/AdminCardSelect';
+import { AdminCardInput } from '@/components/AdminCardInput/AdminCardInput.jsx';
 import { Slider } from '@/components/Slider/Slider.jsx'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
@@ -14,18 +15,27 @@ import AddIcon from '@mui/icons-material/Add';
 import { MyAlert, showAlert } from '@/components/Alert/MyAlert';
 import noimage from './noimage.png'
 
-let getVariantKey = (variant) => {
-  let new_variant = {...variant}
-  delete new_variant['id']
-  delete new_variant['images']
-  return Object.keys(new_variant)[0]
-}
-
-let deleteId_fromNet = (net) => {
+let getSelectFields = (net) => {
   let new_net = {...net}
   delete new_net['id']
   delete new_net['images']
+  delete new_net['price']
+  delete new_net['quantity']
   return new_net
+}
+
+let getVariantKey = (variant) => {
+  let new_variant = getSelectFields(variant)
+  return Object.keys(new_variant)[0]
+}
+
+const AdminCardInputs = ({inputsValues}) => {
+  return (
+    <>
+      <AdminCardInput id='price' label='Цена' defaultValue={inputsValues ? inputsValues.price : ''}/>
+      <AdminCardInput id='quantity' label='Остатки' defaultValue={inputsValues ? inputsValues.quantity : ''}/>
+    </>
+  )
 }
 
 // -----------------------------------------------------
@@ -70,10 +80,17 @@ export const AdminCard = () => {
     for (let input of document.querySelector(`.${styles.AdminCard__inputs}`).children){
       let value = input.querySelector('input').value
       if (!value) {return false}
-      values[input.querySelector('label').id] = value
+      values[input.querySelector('label').id.replace('-label', '')] = value
     }
     values['images'] = images
     return values
+  }
+
+  let getInputsValues = () => {
+    let inputsValues = {}
+    inputsValues['price'] = net.price
+    inputsValues['quantity'] = net.quantity
+    return inputsValues
   }
 
   let addOrUpdateNet = async (type) => {
@@ -156,13 +173,19 @@ export const AdminCard = () => {
           </div> : <></>}
         <div className={styles.AdminCard__inputs}>
           {id ?
-            Object.keys(deleteId_fromNet(net)).map(item => 
-              <AdminCardInput key={item} variants={config[item]} net={deleteId_fromNet(net)} config={config} getVariantKey={getVariantKey}/>
-            )
+            <>
+              {Object.keys(getSelectFields(net)).map(item => 
+                <AdminCardSelect key={item} variants={config[item]} net={getSelectFields(net)} config={config} getVariantKey={getVariantKey}/>
+              )}
+              <AdminCardInputs inputsValues={getInputsValues()}/>
+            </>
           : configValidation ?
-              Object.keys(config).map(item => 
-                <AdminCardInput key={getVariantKey(config[item][0])} variants={config[item]} getVariantKey={getVariantKey}/>
-              )
+            <>
+              {Object.keys(config).map(item => 
+                <AdminCardSelect key={getVariantKey(config[item][0])} variants={config[item]} getVariantKey={getVariantKey}/>
+              )}
+              <AdminCardInputs/>
+            </>
             : <p>Добавьте варианты в <a href={`/admin/${netType}/config`}>конфигурации</a></p>}
         </div>
         <MyAlert ref={alertRefs['validation']} severity="info">Заполните все поля</MyAlert>

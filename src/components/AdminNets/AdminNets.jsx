@@ -3,11 +3,39 @@ import { useParams } from 'react-router';
 import styles from './AdminNets.module.scss'
 import {Loader} from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
-import {Button} from '@mui/material'
+import { Button, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
 
 export const AdminNets = () => {
+  let EditableProperty = ({net, property}) => {
+    let [defaultValue, setDefaultValue] = useState(getNetData_byConfig(net, property))
+    let [value, setValue] = useState(defaultValue)
+    let [isInput, setIsInput] = useState(false)
+
+    return (
+      <div className={styles.AdminNet__netField} onClick={event => {event.stopPropagation()}}>
+        {isInput ? <TextField onChange={event => setValue(event.target.value)} value={value} type='number'/> : defaultValue}
+        <Button onClick={async () => {
+          if (isInput) {
+            let fetchObject = {}
+            fetchObject[property] = parseInt(value)
+            await fetch(`${apiUrl}/net/${netType}/${net.id}`, {
+              method: 'put',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(fetchObject)
+            })
+            setDefaultValue(parseInt(value))
+            setIsInput(false)
+          } else {
+            setIsInput(true)
+          }
+        }}>{isInput ? <CheckIcon/> : <EditIcon/>}</Button>
+      </div>
+    )
+  }
+
   let apiUrl = import.meta.env.VITE_APIURL
   let {netType} = useParams()
   let navigateTo = useNavigate()
@@ -28,8 +56,13 @@ export const AdminNets = () => {
     await getConfig()
   }
 
+  // Возвращает значение свойства по конфигу, если оно из конфига (price и quantity не по конфигу)
   let getNetData_byConfig = (net, type) => {
-    return config[type].filter(item => item.id == net[type])[0][type]
+    if (config[type]) {
+      return config[type].filter(item => item.id == net[type])[0][type]
+    } else {
+      return net[type]
+    }
   }
 
   useEffect(() => {
@@ -52,27 +85,19 @@ export const AdminNets = () => {
           {nets.length != 0 ?
             <div className={styles.AdminNets__nets}>
               <div className={styles.AdminNets__net_titles}>
-                <p className={styles.AdminNet__netField}>фото</p>
-                <p className={styles.AdminNet__netField}>длина</p>
-                <p className={styles.AdminNet__netField}>ширина</p>
-                <p className={styles.AdminNet__netField}>ячейки</p>
-                {netType == 'plastic' ? 
-                  <p className={styles.AdminNet__netField}>цвет</p>  
-                : netType == 'knotless' ? 
-                  <p className={styles.AdminNet__netField}>толщина</p>
-                : <></>}
+                {['фото', 'длина', 'ширина', 'ячейки', netType == 'plastic' ? 'цвет' : netType == 'knotless' ? 'толщина' : null, 'цена', 'остатки'].map(label => 
+                  <div key={label} className={styles.AdminNet__netField}>{label}</div>
+                )}
               </div>
               {nets.map(net => 
                 <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/${netType}/card/${net.id}`)}}>
                   <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : ''} alt='-'/>
-                  <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'length')}</p>
-                  <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'width')}</p>
-                  <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'cell')}</p>
-                  {netType == 'plastic' ? 
-                    <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'color')}</p>  
-                  : netType == 'knotless' ? 
-                    <p className={styles.AdminNet__netField}>{getNetData_byConfig(net, 'thickness')}</p>
-                  : <></>}
+                  {['length', 'width', 'cell', netType == 'plastic' ? 'color' : netType == 'knotless' ? 'thickness' : null].map(property =>
+                    <div key={property} className={styles.AdminNet__netField}>{getNetData_byConfig(net, property)}</div>
+                  )}
+                  {['price', 'quantity'].map(property => 
+                    <EditableProperty key={property} net={net} property={property}/>
+                  )}
                 </div>
               )}
             </div>

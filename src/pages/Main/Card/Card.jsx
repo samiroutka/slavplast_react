@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styles from './Card.module.scss'
-import { useParams, useLocation } from 'react-router';
+import { useParams, useLocation, json } from 'react-router';
 // -------------------------
 import { Header } from '@/components/Header/Header'
 import test_img from './images/test_img.jpg'
@@ -187,8 +187,9 @@ export const Card = () => {
   let getNetsProperties = (nets, config) => {
     let newNetsProperties = {}
     for (let net of nets) {
-      delete net['id']
-      delete net['images']
+      for (let unnecessaryProperty of ['id', 'images', 'price', 'quantity']) {
+        delete net[unnecessaryProperty]
+      }
       for (let property of Object.keys(net)) {
         if (newNetsProperties[property]) {
           newNetsProperties[property][net[property]] = config[property].filter(variant => variant.id == net[property])[0][property]
@@ -204,7 +205,9 @@ export const Card = () => {
   let getData = async () => {
     let nets = await fetch(`${apiUrl}/cells/${netType}/${cellId}`)
     nets = await nets.json()
+    console.log(nets)
     setNets(nets)
+
     let config = await fetch(`${apiUrl}/config/${netType}`)
     config = await config.json()
     setNetsProperties(getNetsProperties(nets, config))
