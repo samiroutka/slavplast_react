@@ -21,14 +21,18 @@ export const Slider = (props) => {
     pagination={{ clickable: true }}
     onSwiper={() => {}}
     onSlideChange={() => {}}>
-      {images.map((image, index) => 
-        <SwiperSlide className={styles.Slider__slider} key={index}>
-          <img src={image} alt=""/>
-          {deleteCallback ? 
-            <Button className={styles.Slider__deleteButton} onClick={deleteCallback}><DeleteRoundedIcon className={styles.Slider__deleteIcon}/></Button>
-          : <></>}
-        </SwiperSlide>
-      )}
+      {images ?
+        images.map((image, index) => 
+          <SwiperSlide className={styles.Slider__slider} key={index}>
+            <img src={image} alt=""/>
+            {deleteCallback ? 
+              <Button className={styles.Slider__deleteButton} onClick={deleteCallback}><DeleteRoundedIcon className={styles.Slider__deleteIcon}/></Button>
+            : <></>}
+          </SwiperSlide>
+        )
+      : <SwiperSlide className={styles.Slider__slider}>
+          <img alt="выберите сетку" />
+        </SwiperSlide>}
     </Swiper>
   )
 } 

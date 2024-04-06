@@ -80,7 +80,7 @@ export const AdminCard = () => {
     for (let input of document.querySelector(`.${styles.AdminCard__inputs}`).children){
       let value = input.querySelector('input').value
       if (!value) {return false}
-      values[input.querySelector('label').id.replace('-label', '')] = value
+      values[input.querySelector('label').id.replace('-label', '')] = parseInt(value)
     }
     values['images'] = images
     return values
@@ -95,6 +95,7 @@ export const AdminCard = () => {
 
   let addOrUpdateNet = async (type) => {
     let values = getValues()
+    console.log(values)
     if (!values) {
       showAlert(alertRefs['validation'].current)
       return false

@@ -4,9 +4,10 @@ import { useParams, useLocation, json } from 'react-router';
 // -------------------------
 import { Header } from '@/components/Header/Header'
 import test_img from './images/test_img.jpg'
+import no_image from './images/noImage.png'
 import { Loader } from '@/components/Loader/Loader.jsx'
 import { Slider } from '@/components/Slider/Slider'
-import { MenuItem, FormControl } from '@mui/material';
+import { TextField, InputAdornment, MenuItem, FormControl } from '@mui/material';
 import Select from '@mui/material/Select';
 
 export const Card = () => {
@@ -63,6 +64,7 @@ export const Card = () => {
       thickness: useRef(),
     }
     let [availableProperties, setAvailableProperties] = useState()
+    let [availableNets, setAvailableNets] = useState()
 
     let getSelectedProperties = () => {
       let selectedProperties = {}
@@ -86,6 +88,7 @@ export const Card = () => {
           }
         }
       }
+      setAvailableNets(availableNets)
 
       // преобразуем объект из сеток в объект из доступных свойств
       let newAvailableProperties = {}
@@ -109,9 +112,18 @@ export const Card = () => {
       setAvailableProperties(newAvailableProperties)
     }
 
+    let [priceValue, setPriceValue] = useState(0)
+    let [maxQuantityValue, setMaxQuantityValue] = useState(0)
+    let [quantityValue, setQuantityValue] = useState(0)
+    let [errorMessage, setErrorMessage] = useState('')
+
     let onChangeSelect = (selectProperty) => {
-      // устанавливаем пустые value для нужных select
-      for (let property of propertiesOrder.slice(propertiesOrder.indexOf(selectProperty)+1)) {
+      // обнуляем количство и стоимость (quantity, price) и устанавливаем пустые value для нужных select
+      setQuantityValue(0)
+      setMaxQuantityValue(0)
+      setPriceValue(0)
+      setImagesFunction(null)
+      for (let property of [...propertiesOrder].slice(propertiesOrder.indexOf(selectProperty)+1)) {
         selectsSetOptions[property]('')
       }
 
@@ -149,6 +161,17 @@ export const Card = () => {
       }
     }, [disabledSelects])
 
+    useEffect(() => {
+      let lastProperty = propertiesOrder[propertiesOrder.length-1]
+      let lastValue = getSelectedProperties()[lastProperty]
+      if (lastValue) {
+        setImagesFunction(availableNets[0].images.length != 0 ? availableNets[0].images : [no_image])
+        setPriceValue(availableNets[0].price)
+        setMaxQuantityValue(availableNets[0].quantity)
+        setQuantityValue(availableNets[0].quantity != 0 ? 1 : 0)
+      }
+    }, [disabledSelects])
+
     return (
       <div className={styles.Card__properties}>
         <div className={styles.Card__property}>
@@ -172,6 +195,26 @@ export const Card = () => {
             <div className={styles.underline}></div>
             <MuiSelect ref={selectsRefs.thickness} disabled={disabledSelects.thickness} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties.thickness : false} property='thickness' onChangeSelect={onChangeSelect}/>
           </div>}
+        <div className={`${styles.Card__property} ${styles.Card__additionalProperty}`}>
+          <strong>Количество</strong>
+          <div className={styles.underline}></div>
+          <TextField disabled={!maxQuantityValue} className={styles.Card__property_input} variant="standard" value={quantityValue} onChange={event => {
+            if (event.target.value <= maxQuantityValue) {
+              setQuantityValue(event.target.value)
+              setErrorMessage('')
+            } else {
+              setErrorMessage(`У нас только ${maxQuantityValue}шт`)
+            }
+          }} type='number' dir="rtl" error={Boolean(errorMessage)} helperText={errorMessage} InputProps={{
+            startAdornment: <InputAdornment sx={{paddingLeft: '5%'}} position="start">шт</InputAdornment>,
+            inputProps: {min: 0, max: maxQuantityValue}
+          }}/>
+        </div>
+        <div className={`${styles.Card__property} ${styles.Card__additionalProperty}`}>
+          <strong>Стоимость</strong>
+          <div className={styles.underline}></div>
+          <p>{priceValue*quantityValue}₽</p>
+        </div>
       </div>
     )
   }
@@ -205,24 +248,37 @@ export const Card = () => {
   let getData = async () => {
     let nets = await fetch(`${apiUrl}/cells/${netType}/${cellId}`)
     nets = await nets.json()
-    console.log(nets)
     setNets(nets)
 
     let config = await fetch(`${apiUrl}/config/${netType}`)
     config = await config.json()
-    setNetsProperties(getNetsProperties(nets, config))
+    setNetsProperties(getNetsProperties(JSON.parse(JSON.stringify(nets)), config))
   }
 
   useEffect(() => {
     getData()
   }, [])
 
+  let setImagesFunction = false
+
+  let CardSlider = () => {
+    let [images, setImages] = useState(null)
+  
+    useEffect(() => {
+      setImagesFunction = setImages
+    }, [])
+  
+    return (
+      <Slider className={styles.Card__slider} images={images}/>
+    )
+  }
+
   return (
     <>
       <Header/>
       {!(nets && netsProperties) ? <Loader/> :
         <section className={styles.Card}>
-          <Slider className={styles.Card__slider} images={[test_img, test_img, test_img]}/>
+          <CardSlider getSetImagesFunction={(setState) => {setSetImagesFunction(setState)}}/>
           <div className={styles.Card__description}>
             <h1>Сетка садовая {netType == 'plastic' ? 'пластиковая' : 'безузелковая'} {cell} мм</h1>
             <CardProperties/>
