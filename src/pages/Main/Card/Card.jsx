@@ -1,44 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, memo } from 'react'
 import styles from './Card.module.scss'
-import { useParams, useLocation, json } from 'react-router';
+import { useParams } from 'react-router';
 // -------------------------
 import { Header } from '@/components/Header/Header'
-import test_img from './images/test_img.jpg'
 import no_image from './images/noImage.png'
 import { Loader } from '@/components/Loader/Loader.jsx'
 import { Slider } from '@/components/Slider/Slider'
-import { TextField, InputAdornment, MenuItem, FormControl } from '@mui/material';
-import Select from '@mui/material/Select';
+import { MuiSelect } from '@/components/MuiSelect/MuiSelect';
+import { TextField, InputAdornment } from '@mui/material';
 
 export const Card = () => {
-  const MuiSelect = React.forwardRef(({property, disabled, onChangeSelect, availableProperties, getSelectSetOption}, ref) => {
-    const [option, setOption] = useState('')
-
-    useEffect(() => {
-      getSelectSetOption(setOption, property)
-    }, [])
-
-    useEffect(() => {
-      option ? onChangeSelect(property) : null
-    }, [option])
-
-    return (
-      <FormControl variant="standard" fullWidth className={styles.Card__muiLabel}>
-        <Select
-          disabled={disabled}
-          ref={ref}
-          value={option}
-          onChange={(event) => {
-            setOption(event.target.value)
-          }}>
-          {Object.entries(netsProperties[property]).map(([key, value]) => 
-            <MenuItem key={key} value={key} disabled={availableProperties ? !availableProperties.includes(parseInt(key)) ? true : false : false}>{value}</MenuItem>
-          )}
-        </Select>
-      </FormControl>
-    )
-  })
-
   const CardProperties = () => {
     // Я пострался сделать так, чтобы от порядка массива propertiesOrder зависило очередность открытия selects
     let propertiesOrder = ['length', 'width', netsProperties.color ? 'color' : 'thickness']
@@ -122,7 +93,6 @@ export const Card = () => {
       setQuantityValue(0)
       setMaxQuantityValue(0)
       setPriceValue(0)
-      setImagesFunction(null)
       for (let property of [...propertiesOrder].slice(propertiesOrder.indexOf(selectProperty)+1)) {
         selectsSetOptions[property]('')
       }
@@ -142,6 +112,10 @@ export const Card = () => {
     }
 
     useEffect(() => {
+      console.log('CardProperties render')
+    }, [])
+
+    useEffect(() => {
       let selectedProperties = getSelectedProperties()
       let getSelectProperty = () => {
         for (let property of propertiesOrder) {
@@ -159,42 +133,34 @@ export const Card = () => {
           checkAvailableProperties(selectProperty)
         }
       }
-    }, [disabledSelects])
 
-    useEffect(() => {
-      let lastProperty = propertiesOrder[propertiesOrder.length-1]
-      let lastValue = getSelectedProperties()[lastProperty]
-      if (lastValue) {
+      // проверяем нужно ли вставлять картинку или нет
+      if (selectedProperties[propertiesOrder[propertiesOrder.length-1]]) {
         setImagesFunction(availableNets[0].images.length != 0 ? availableNets[0].images : [no_image])
         setPriceValue(availableNets[0].price)
         setMaxQuantityValue(availableNets[0].quantity)
         setQuantityValue(availableNets[0].quantity != 0 ? 1 : 0)
+      } else {
+        setImagesFunction(null)
       }
     }, [disabledSelects])
 
+    let propertyLabels = {
+      'width': 'Ширина',
+      'length': 'Длина',
+      'color': 'Цвет',
+      'thickness': 'Толщина',
+    }
+
     return (
       <div className={styles.Card__properties}>
-        <div className={styles.Card__property}>
-          <strong>Длина</strong>
-          <div className={styles.underline}></div>
-          <MuiSelect ref={selectsRefs.length} disabled={disabledSelects.length} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties.length : false} property='length' onChangeSelect={onChangeSelect}/>
-        </div>
-        <div className={styles.Card__property}>
-          <strong>Ширина</strong>
-          <div className={styles.underline}></div>
-          <MuiSelect ref={selectsRefs.width} disabled={disabledSelects.width} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties.width : false} property='width' onChangeSelect={onChangeSelect}/>
-        </div>
-        {netsProperties['color'] ?
-          <div className={styles.Card__property}>
-            <strong>Цвет</strong>
+        {propertiesOrder.map(property => 
+          <div className={styles.Card__property} key={property}>
+            <strong>{propertyLabels[property]}</strong>
             <div className={styles.underline}></div>
-            <MuiSelect ref={selectsRefs.color} disabled={disabledSelects.color} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties.color : false} property='color' onChangeSelect={onChangeSelect}/>
+            <MuiSelect ref={selectsRefs[property]} disabled={disabledSelects[property]} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties[property] : false} property={property} onChangeSelect={onChangeSelect} netsProperties={netsProperties}/>
           </div>
-        : <div className={styles.Card__property}>
-            <strong>Толщина</strong>
-            <div className={styles.underline}></div>
-            <MuiSelect ref={selectsRefs.thickness} disabled={disabledSelects.thickness} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties.thickness : false} property='thickness' onChangeSelect={onChangeSelect}/>
-          </div>}
+        )}
         <div className={`${styles.Card__property} ${styles.Card__additionalProperty}`}>
           <strong>Количество</strong>
           <div className={styles.underline}></div>
@@ -256,6 +222,7 @@ export const Card = () => {
   }
 
   useEffect(() => {
+    console.log('Card render')
     getData()
   }, [])
 
@@ -278,7 +245,7 @@ export const Card = () => {
       <Header/>
       {!(nets && netsProperties) ? <Loader/> :
         <section className={styles.Card}>
-          <CardSlider getSetImagesFunction={(setState) => {setSetImagesFunction(setState)}}/>
+          <CardSlider/>
           <div className={styles.Card__description}>
             <h1>Сетка садовая {netType == 'plastic' ? 'пластиковая' : 'безузелковая'} {cell} мм</h1>
             <CardProperties/>

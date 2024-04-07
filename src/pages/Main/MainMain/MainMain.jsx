@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Header } from '@/components/Header/Header'
 import styles from './MainMain.module.scss'
 import net1 from './images/net1.jpg'
@@ -10,7 +10,7 @@ export const MainMain = () => {
 
   return (
     <div className={styles.Main}>
-      <Header/>
+      <Header className={styles.Main__header}/>
       <section className={styles.Main__products}>
         <div className={styles.Main__product} onClick={() => {navigateTo(`/sorting/plastic`)}}>
           <img src={net1} alt="" />

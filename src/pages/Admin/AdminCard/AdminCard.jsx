@@ -30,6 +30,10 @@ let getVariantKey = (variant) => {
 }
 
 const AdminCardInputs = ({inputsValues}) => {
+  useEffect(() => {
+    console.log('inputsValues', Boolean(inputsValues), inputsValues.price)
+  }, [])
+
   return (
     <>
       <AdminCardInput id='price' label='Цена' defaultValue={inputsValues ? inputsValues.price : ''}/>
@@ -95,7 +99,6 @@ export const AdminCard = () => {
 
   let addOrUpdateNet = async (type) => {
     let values = getValues()
-    console.log(values)
     if (!values) {
       showAlert(alertRefs['validation'].current)
       return false

@@ -10,6 +10,7 @@ import { Basket } from '@/pages/Main/Basket/Basket.jsx';
 import { AdminMain } from '@/pages/Admin/AdminMain/AdminMain.jsx'
 import { AdminCard } from '@/pages/Admin/AdminCard/AdminCard.jsx'
 import { AdminConfig } from '@/pages/Admin/AdminConfig/AdminConfig.jsx'
+import { AdminPassword } from '@/pages/Admin/AdminPassword/AdminPassword.jsx'
 import './App.scss'
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     <StyledEngineProvider injectFirst>
       <BrowserRouter> 
         <Routes>
+          <Route path="/admin/password" element={<AdminPassword/>}/>
           <Route path="/admin/:netType" element={<AdminMain/>}/>
           <Route path="/admin/:netType" element={<AdminMain/>}/>
           <Route path="/admin/:netType/config" element={<AdminConfig/>}/>

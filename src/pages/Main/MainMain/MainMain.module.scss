@@ -6,10 +6,63 @@ body{
   }
 }
 
+@keyframes headerAppearance{
+  0%{
+    opacity: 0;
+  }
+  50%{
+    transform: translateY(-100%) scale(.5);
+    filter: blur(10px);
+  }
+  75%{
+    transform: translateY(0) scale(.5);
+    filter: blur(10px);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+.Main{
+  overflow: hidden;
+}
+
+.Main__header{
+  animation: headerAppearance 3s ease-in-out;
+}
+
+@keyframes productsAnimation {
+  0%{
+    position: relative;
+    top: -10vw;
+    left: 55vw;
+  
+    transform: scale(.02);
+    filter: blur(100px) brightness(0);
+  }
+  25%{
+    position: relative;
+    top: -15vw;
+    left: 45vw;
+  
+    transform: scale(.02);
+    filter: blur(100px) brightness(0);
+  }
+  65%{
+    position: relative;
+    top: 0;
+    left: 0;
+  
+    transform: scale(.2);
+    filter: blur(100px) brightness(0);
+  }
+}
 .Main__products{
   margin-top: 30px !important;
   display: flex;
   justify-content: space-around;
+  
+  animation: productsAnimation 2s ease-in-out;
   *{
     transition: all .2s ease;
   }
@@ -29,6 +82,20 @@ body{
     height: 100%;
     object-fit: cover;
   }
+
+  @keyframes paragraphAnimation{
+    0%{
+      bottom: -30%;
+      filter: blur(15px);
+      border-radius: 50px;
+    }
+    75%{
+      bottom: 0;
+      filter: blur(15px);
+      border-radius: 10px;
+    }
+  }
+
   p{
     margin: 0;
     padding: 1vw 0;
@@ -42,6 +109,8 @@ body{
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
+
+    animation: paragraphAnimation 1.5s 1.5s ease-in-out;
   }
 
   &:hover{

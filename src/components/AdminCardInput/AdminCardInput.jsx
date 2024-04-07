@@ -4,6 +4,6 @@ import { TextField } from '@mui/material'
 
 export const AdminCardInput = React.forwardRef(({label, defaultValue, id}, ref) => {
   return (
-    <TextField ref={ref} className={styles.AdminCardInput} defaultValue={defaultValue ? defaultValue : ''} label={label} id={id} variant="filled" type='number'/>
+    <TextField ref={ref} className={styles.AdminCardInput} defaultValue={String(defaultValue) ? defaultValue : ''} label={label} id={id} variant="filled" type='number'/>
   )
 })

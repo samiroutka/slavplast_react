@@ -12,6 +12,10 @@ import { Button } from '@mui/material';
 export const Slider = (props) => {
   let {images, deleteCallback} = props
 
+  useEffect(() => {
+    console.log(images)
+  }, [images])
+
   return (
     <Swiper className={`${styles.Slider} ${props.className ? props.className : ''}`}
     modules={[Navigation, Pagination]}
