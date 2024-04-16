@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {Button, TextField, InputAdornment, Select, MenuItem, FormControl, InputLabel, Alert} from '@mui/material'
+import { Button, TextField, InputAdornment, Dialog, Slide } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { Loader } from '@/components/Loader/Loader'
+import { Ckeditor } from '@/components/Ckeditor/Ckeditor'
+import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './AdminConfig.module.scss'
-import {MyAlert, showAlert, closeAlert} from '@/components/Alert/MyAlert'
+import { MyAlert, showAlert, closeAlert } from '@/components/Alert/MyAlert'
 import { useParams } from 'react-router';
 
 export const AdminConfig = () => {
@@ -20,14 +22,58 @@ export const AdminConfig = () => {
     )
   })
 
-  const AdminColumn = ({type}) => { 
+  const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  })
+
+  const AdminDialog = ({isDialogOpen, setIsDialogOpen, item}) => {
+    let [editorGetContent, setEditorGetContent] = useState()
+
+    return (
+      <Dialog fullWidth={true} maxWidth={'sm'} onClose={() => {setIsDialogOpen(false)}} open={isDialogOpen} TransitionComponent={Transition}>
+        <div className={styles.AdminConfig__dialog}>
+          <Ckeditor inputValue={item.description ? item.description : ''} setEditorGetContent={setEditorGetContent}/>
+          {/* <Ckeditor/> */}
+          <Button onClick={async () => {
+            setIsLoading(true)
+            let response = await fetch(`${apiUrl}/cells/${netType}/${item.id}`, {
+              method: 'put',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                'description': editorGetContent()
+              })
+            })
+            if (response.ok) {
+              await getConfig()
+              setIsLoading(false)
+            } 
+          }}>Сохранить</Button>
+        </div>
+      </Dialog>
+    )
+  }
+
+  const AdminConfigItem = ({type, item}) => {
+    let [isDialogOpen, setIsDialogOpen] = useState(false)
+    return (
+      <div className={styles.AdminConfig__row} key={item['id']}>
+        {type == 'cell' && isDialogOpen ?
+          <AdminDialog item={item} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen}/>
+        : null}
+        {type == 'cell' ? 
+          <DescriptionIcon onClick={() => setIsDialogOpen(true)} className={styles.AdminConfig__columnButton}/>
+        : null}
+        <p>{item[type]}</p>
+        <DeleteIcon className={styles.AdminConfig__columnButton} onClick={() => {deleteItem(item)}}/>
+      </div>
+    )
+  }
+
+  const AdminColumn = ({type}) => {
     return (
       <div className={styles.AdminConfig__column}>
         {config[type] ? config[type].map(item => 
-          <div className={styles.AdminConfig__row} key={item['id']}>
-            <p>{item[type]}</p>
-            <DeleteIcon className={styles.AdminConfig__deleteButton} onClick={() => {deleteItem(item)}}/>
-          </div>
+          <AdminConfigItem key={item.id} type={type} item={item}/>
         ): <span>-</span>}
       </div>
     )

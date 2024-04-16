@@ -30,10 +30,6 @@ let getVariantKey = (variant) => {
 }
 
 const AdminCardInputs = ({inputsValues}) => {
-  useEffect(() => {
-    console.log('inputsValues', Boolean(inputsValues), inputsValues.price)
-  }, [])
-
   return (
     <>
       <AdminCardInput id='price' label='Цена' defaultValue={inputsValues ? inputsValues.price : ''}/>

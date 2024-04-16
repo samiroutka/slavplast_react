@@ -1,4 +1,8 @@
 
+:root {
+  --slider-and-info-widht: 48%;
+}
+
 .Card{
   margin-top: 2vw;
   display: flex;
@@ -6,13 +10,15 @@
 }
 
 .Card__slider{
-  width: 50%;
+  width: var(--slider-and-info-widht);
   height: 30vw;
 }
 
-.Card__description{
-  width: 48%;
+.Card__info{
+  width: var(--slider-and-info-widht);
+}
 
+.Card__description{
   p{
     margin-top: 5%;
   }

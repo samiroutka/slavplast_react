@@ -13,11 +13,18 @@
   }
 }
 
+:global(#ckeditor){
+  display: none;
+}
+
 .AdminConfig{
   margin-top: 2%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.AdminConfig__dialog{
+  padding: 5%;
 }
 .AdminConfig__column{
   width: 24%;
@@ -26,6 +33,7 @@
   margin: 2% 0;
   width: 100%;
   display: flex;
+  justify-content: center;
   align-items: center;
 
   background-color: rgba(0, 128, 0, 0.7);
@@ -34,9 +42,9 @@
   text-align: center;
 
   p{
-    width: 85%;
+    flex-grow: .9;
   }
-  .AdminConfig__deleteButton{
+  .AdminConfig__columnButton{
     transition: all .2s ease;
     &:hover{
       cursor: pointer;

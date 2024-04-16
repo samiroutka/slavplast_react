@@ -11,6 +11,11 @@ export const Card = () => {
   let {netType, cellId, cell} = useParams()
   let [nets, setNets] = useState()
   let [netsProperties, setNetsProperties] = useState()
+  let [cellDescription, setCellDescription] = useState()
+
+  useEffect(() => {
+    console.log(cellDescription)
+  }, [cellDescription])
 
   let getNetsProperties = (nets, config) => {
     let newNetsProperties = {}
@@ -37,6 +42,7 @@ export const Card = () => {
 
     let config = await fetch(`${apiUrl}/config/${netType}`)
     config = await config.json()
+    setCellDescription(config.cell.filter(item => item.cell == cell)[0].description)
     setNetsProperties(getNetsProperties(JSON.parse(JSON.stringify(nets)), config))
   }
 
@@ -52,10 +58,10 @@ export const Card = () => {
       {!(nets && netsProperties) ? <Loader/> :
         <section className={styles.Card}>
           <Slider className={styles.Card__slider} images={images}/>
-          <div className={styles.Card__description}>
-            <h1>Сетка садовая {netType == 'plastic' ? 'пластиковая' : 'безузелковая'} {cell} мм</h1>
+          <div className={styles.Card__info}>
+            <h1>Сетка {netType == 'plastic' ? 'пластиковая' : 'безузелковая'} {cell} мм</h1>
             <CardProperties nets={nets} netsProperties={netsProperties} setImages={setImages}/>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias alias veniam labore, sapiente totam ipsum? Eum vero laborum adipisci unde, doloribus natus enim, voluptatibus alias facilis modi fuga laudantium nostrum, doloremque ipsa officiis similique fugiat. Doloremque sequi sit animi eaque asperiores? Hic iure sunt inventore harum error quod quasi dolore?</p>
+            <div className={styles.Card__description} dangerouslySetInnerHTML={{ __html: cellDescription ? cellDescription : 'Это великолепная ячейка' }}></div>
           </div>
         </section>}
     </>
