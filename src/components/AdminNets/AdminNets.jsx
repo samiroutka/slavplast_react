@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router';
 import styles from './AdminNets.module.scss'
-import {Loader} from '@/components/Loader/Loader';
+import { AdminFilter } from '@/components/AdminFilter/AdminFilter'; 
+import { Loader } from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
 import { Button, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
+
+// simular ty range() in python
+const range = (start, end, step = 1) => Array.from({ length: Math.ceil((end - start) / step) }, (_, i) => start + i * step);
 
 export const AdminNets = () => {
   let EditableProperty = ({net, property}) => {
@@ -40,12 +44,15 @@ export const AdminNets = () => {
   let {netType} = useParams()
   let navigateTo = useNavigate()
  
+  let [allNets, setAllNets] = useState()
   let [nets, setNets] = useState()
   let [config, setConfig] = useState()
 
   let getNets = async () => {
     let response = await fetch(`${apiUrl}/nets/${netType}`)
-    setNets(await response.json())
+    response = await response.json()
+    setNets(response)
+    setAllNets(response)
   }
   let getConfig = async () => {
     let response = await fetch(`${apiUrl}/config/${netType}`)
@@ -81,7 +88,36 @@ export const AdminNets = () => {
           <h1>{netType == 'plastic' ? 'Пластиковая' : netType == 'knotless' ? 'Безузелковая' : ''}</h1>
           <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo(`/admin/${netType}/card/add`)}>Добавить сетку</Button>
           <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo(`/admin/${netType}/config`)}>Изменить конфигурацию</Button>
-          <h3 className={styles.AdminNets__netTitle}>Сетки</h3>
+          <h2 className={styles.AdminNets__netTitle}>Сетки</h2>
+          <AdminFilter netType={netType} config={config} searchOnClick={(values) => {
+            let {price, quantity, ...selectValues} = values
+            let newNets = Object.keys(values).length ? allNets.filter(net => {
+              let test = true
+              // проверка select фильтров
+              for (let [key, value] of Object.entries(selectValues)) {
+                if (net[key] != value) {
+                  test = false
+                  break
+                }
+              }
+              // проверка range inputs фильтров
+              for (let [key, value] of Object.entries({price, quantity})) {
+                if (value) {
+                  let rangeNumber1 = parseInt(value.split('-')[0])
+                  let rangeNumber2 = parseInt(value.split('-')[1])+1 // +1 тк включая последний элемент
+                  if (!range(rangeNumber1 ? rangeNumber1 : 0, rangeNumber2 ? rangeNumber2 : 100_000).includes(net[key])) {
+                    test = false
+                    break
+                  }
+                }
+              }
+              return test
+            }) : null
+            newNets ? setNets(newNets) : null
+          }} clearOnClick={(clearFields) => {
+            clearFields() // функция написана в AdminFilter
+            setNets(allNets)
+          }}/>
           {nets.length != 0 ?
             <div className={styles.AdminNets__nets}>
               <div className={styles.AdminNets__net_titles}>

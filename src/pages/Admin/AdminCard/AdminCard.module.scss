@@ -20,6 +20,11 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 1vw;
+}
+.AdminCard__input{
+  width: 45%;
+  flex-grow: 1;
 }
 .AdminCard__input_cell{
   display: flex;

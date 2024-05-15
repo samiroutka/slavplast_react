@@ -1,12 +1,10 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './AdminCardSelect.module.scss'
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material'
 
-export const AdminCardSelect = ({variants, net, config, getVariantKey}) => {
-  // current_variantKey - length, width, cell и тд. То есть тип поля
-  let current_variantKey = getVariantKey(variants[0])
-  let netVariantId = net ? config[current_variantKey].filter(variant => variant.id == net[current_variantKey])[0]['id'] : null
+export const AdminCardSelect = React.forwardRef(({className, cleannessTest, variants, net, property}, ref) => {
+  let netVariantId = net ? variants.filter(variant => variant.id == net[property])[0]['id'] : null
   let labels = {
     'length': 'Длина',
     'width': 'Ширина',
@@ -14,16 +12,20 @@ export const AdminCardSelect = ({variants, net, config, getVariantKey}) => {
     'color': 'Цвет',
     'thickness': 'Толщина',
   }
-  let input_id = `${current_variantKey}`
+  let input_id = `${property}`
   let [selectValue, setSelectValue] = useState(net ? netVariantId : '')
   const handleChange = (event) => {
     setSelectValue(event.target.value);
   };
 
+  useEffect(() => {
+    cleannessTest ? setSelectValue('') : null
+  }, [cleannessTest])
+
   return (
-    <div className={styles.AdminCardSelect}>
-      <FormControl sx={{width: '100%'}} variant="filled">
-        <InputLabel id={input_id}>{labels[current_variantKey]}</InputLabel>
+    <div className={`${styles.AdminCardSelect} ${className ? className : ''}`}>
+      <FormControl ref={ref} sx={{width: '100%'}} variant="filled">
+        <InputLabel id={input_id}>{labels[property]}</InputLabel>
         <Select
           labelId={`${input_id}_label`}
           id={input_id}
@@ -31,10 +33,10 @@ export const AdminCardSelect = ({variants, net, config, getVariantKey}) => {
           onChange={handleChange}
         >
           {variants.map(variant => 
-              <MenuItem key={variant.id} value={variant.id}>{variant[getVariantKey(variant)]}</MenuItem>
+              <MenuItem key={variant.id} value={variant.id}>{variant[property]}</MenuItem>
           )}
         </Select>
       </FormControl>
     </div>
   )
-}
+})

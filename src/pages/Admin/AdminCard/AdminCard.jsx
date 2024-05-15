@@ -32,8 +32,8 @@ let getVariantKey = (variant) => {
 const AdminCardInputs = ({inputsValues}) => {
   return (
     <>
-      <AdminCardInput id='price' label='Цена' defaultValue={inputsValues ? inputsValues.price : ''}/>
-      <AdminCardInput id='quantity' label='Остатки' defaultValue={inputsValues ? inputsValues.quantity : ''}/>
+      <AdminCardInput className={styles.AdminCard__input} id='price' label='Цена' defaultValue={inputsValues ? inputsValues.price : ''}/>
+      <AdminCardInput className={styles.AdminCard__input} id='quantity' label='Остатки' defaultValue={inputsValues ? inputsValues.quantity : ''}/>
     </>
   )
 }
@@ -175,14 +175,14 @@ export const AdminCard = () => {
           {id ?
             <>
               {Object.keys(getSelectFields(net)).map(item => 
-                <AdminCardSelect key={item} variants={config[item]} net={getSelectFields(net)} config={config} getVariantKey={getVariantKey}/>
+                <AdminCardSelect className={styles.AdminCard__input} key={item} variants={config[item]} net={getSelectFields(net)} property={getVariantKey(config[item][0])}/>
               )}
               <AdminCardInputs inputsValues={getInputsValues()}/>
             </>
           : configValidation ?
             <>
               {Object.keys(config).map(item => 
-                <AdminCardSelect key={getVariantKey(config[item][0])} variants={config[item]} getVariantKey={getVariantKey}/>
+                <AdminCardSelect className={styles.AdminCard__input} key={getVariantKey(config[item][0])} variants={config[item]} property={getVariantKey(config[item][0])}/>
               )}
               <AdminCardInputs/>
             </>

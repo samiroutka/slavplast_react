@@ -1,0 +1,13 @@
+
+.AdminFilter{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1vw;
+  margin: 2% 0;
+}
+
+.AdminFilter__filter{
+  width: 20% !important;
+  flex-grow: 1;
+}

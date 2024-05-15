@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
-import styles from './AdminCardInput.module.scss'
+import React, { useEffect, useState } from 'react'
 import { TextField } from '@mui/material'
 
-export const AdminCardInput = React.forwardRef(({label, defaultValue, id}, ref) => {
+export const AdminCardInput = React.forwardRef(({className, label, defaultValue, id}, ref) => {
+  let [value, setValue] = useState(String(defaultValue) ? defaultValue : '')
+
   return (
-    <TextField ref={ref} className={styles.AdminCardInput} defaultValue={String(defaultValue) ? defaultValue : ''} label={label} id={id} variant="filled" type='number'/>
+    <TextField ref={ref} className={className ? className : ''} value={value} onChange={event => setValue(event.target.value)} label={label} id={id} variant="filled" type='number'/>
   )
 })
