@@ -5,6 +5,7 @@ import { AdminFilter } from '@/components/AdminFilter/AdminFilter';
 import { Loader } from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
 import { Button, TextField } from '@mui/material'
+import { ChangeableInput } from '@/components/ChangeableInput/ChangeableInput';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
@@ -14,29 +15,21 @@ const range = (start, end, step = 1) => Array.from({ length: Math.ceil((end - st
 
 export const AdminNets = () => {
   let EditableProperty = ({net, property}) => {
-    let [defaultValue, setDefaultValue] = useState(getNetData_byConfig(net, property))
-    let [value, setValue] = useState(defaultValue)
-    let [isInput, setIsInput] = useState(false)
+    let [value, setValue] = useState(getNetData_byConfig(net, property))
+    let [isEdit, setIsEdit] = useState(false)
 
     return (
-      <div className={styles.AdminNet__netField} onClick={event => {event.stopPropagation()}}>
-        {isInput ? <TextField onChange={event => setValue(event.target.value)} value={value} type='number'/> : defaultValue}
-        <Button onClick={async () => {
-          if (isInput) {
-            let fetchObject = {}
-            fetchObject[property] = parseInt(value)
-            await fetch(`${apiUrl}/net/${netType}/${net.id}`, {
-              method: 'put',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify(fetchObject)
-            })
-            setDefaultValue(parseInt(value))
-            setIsInput(false)
-          } else {
-            setIsInput(true)
-          }
-        }}>{isInput ? <CheckIcon/> : <EditIcon/>}</Button>
-      </div>
+      <ChangeableInput type="number" className={styles.AdminNet__netField} onConfirm={async newValue => {
+        let fetchObject = {}
+        fetchObject[property] = parseInt(newValue)
+        await fetch(`${apiUrl}/net/${netType}/${net.id}`, {
+          method: 'put',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(fetchObject)
+        })
+        setValue(parseInt(newValue))
+        setIsEdit(false)
+      }} onEdit={() => setIsEdit(true)} isEdit={isEdit} defaultValue={value}/>
     )
   }
 

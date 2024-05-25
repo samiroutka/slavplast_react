@@ -34,9 +34,6 @@
   --field-width: calc(100% / 7);
   .AdminNet__netField{
     width: var(--field-width);
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
   img.AdminNet__netField{
     padding: .7%;

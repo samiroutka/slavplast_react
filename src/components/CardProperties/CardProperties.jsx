@@ -6,7 +6,7 @@ import { TextField, InputAdornment } from '@mui/material';
 
 let selectsSetOptions = {}
 
-export const CardProperties = ({nets, netsProperties, setImages}) => {
+export const CardProperties = ({setSelectNetValues, nets, netsProperties, setImages}) => {
   // Я пострался сделать так, чтобы от порядка массива propertiesOrder зависило очередность открытия selects
   let propertiesOrder = ['length', 'width', netsProperties.color ? 'color' : 'thickness']
   let changeFirstProperty = (properties) => { // устанавливает первую сетку из propertiesOrder на false, чтобы она была кликабельна
@@ -141,6 +141,11 @@ export const CardProperties = ({nets, netsProperties, setImages}) => {
     'color': 'Цвет',
     'thickness': 'Толщина',
   }
+
+  useEffect(() => {
+    let selectNetValues = {...getSelectedProperties(), cell: nets[0].cell, quantity: parseInt(quantityValue), price: priceValue*quantityValue}
+    setSelectNetValues(selectNetValues)
+  }, [quantityValue, priceValue, availableNets, availableProperties])
 
   return (
     <div className={styles.Card__properties}>

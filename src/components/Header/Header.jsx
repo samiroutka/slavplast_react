@@ -46,7 +46,8 @@ export const Header = ({className}) => {
           </div>
         </div>
       </div>
-      <img className={styles.Header__basket} src={basket} alt="" />
+      <img id='basket' onClick={() => navigateTo('/basket')} className={styles.Header__basket} src={basket} alt="" />
+      {/* id нужен чтобы можно было найти элемент для анимации */}
     </section>
   )
 }
