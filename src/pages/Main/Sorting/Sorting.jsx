@@ -27,6 +27,9 @@ export const Sorting = () => {
       {!cells ? <Loader/> :
         cells.length > 0 ? 
         <section className={styles.Sorting}>
+          <div onClick={() => navigateTo(`/allnets/${netType}`)} className={styles.Sorting__element}>
+            <p>все сетки</p>
+          </div>
           {cells.map(cell => 
             <div className={styles.Sorting__element} key={cell.id} onClick={() => {
               navigateTo(`/cards/${netType}/${cell.id}/${cell.cell}`)

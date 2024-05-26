@@ -9,7 +9,7 @@ let AdminFilterSelects = ({netType, config, cleannessTest}) => {
   return (
     <>
       {selectsProperties.map(property => 
-        <AdminCardSelect key={property} cleannessTest={cleannessTest} className={`${styles.AdminFilter__filter} ${styles.AdminFilter__filterSelect}`} variants={config[property]} property={property}/>  
+        <AdminCardSelect key={property} cleannessTest={cleannessTest} className={styles.AdminFilter__filter} variants={config[property]} property={property}/>  
       )}
     </>
   )
@@ -39,7 +39,7 @@ export const AdminFilter = ({netType, config, searchOnClick, clearOnClick}) => {
       <AdminRangeInput value1={quantityMin} value1Set={setQuantityMin} value2={quantityMax} value2Set={setQuantityMax} label1='остатки от' label2='остатки до'/>
       <Button size='small' variant='contained' onClick={searchOnClick ? () => {
         let selectsValues = {}
-        for (let select of document.querySelectorAll(`.${styles.AdminFilter__filterSelect}`)) {
+        for (let select of document.querySelectorAll(`.${styles.AdminFilter__filter}`)) {
           selectsValues[select.querySelector('label').id] = parseInt(select.querySelector('input').value)
         }
         let values = {

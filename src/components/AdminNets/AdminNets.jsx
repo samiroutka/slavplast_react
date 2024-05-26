@@ -4,16 +4,12 @@ import styles from './AdminNets.module.scss'
 import { AdminFilter } from '@/components/AdminFilter/AdminFilter'; 
 import { Loader } from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
-import { Button, TextField } from '@mui/material'
+import { Button } from '@mui/material'
 import { ChangeableInput } from '@/components/ChangeableInput/ChangeableInput';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
 
-// simular ty range() in python
-const range = (start, end, step = 1) => Array.from({ length: Math.ceil((end - start) / step) }, (_, i) => start + i * step);
-
-export const AdminNets = () => {
+export const AdminNets = ({editaeble = true, adminNetsHeader = true, title = 'Сетки'}) => {
   let EditableProperty = ({net, property}) => {
     let [value, setValue] = useState(getNetData_byConfig(net, property))
     let [isEdit, setIsEdit] = useState(false)
@@ -32,6 +28,13 @@ export const AdminNets = () => {
       }} onEdit={() => setIsEdit(true)} isEdit={isEdit} defaultValue={value}/>
     )
   }
+
+  // similar to range() in python
+  const range = (start, end, step = 1) => Array.from({ length: Math.ceil((end - start) / step) }, (_, i) => start + i * step);
+
+  useEffect(() => {
+    console.log(netType)
+  }, [])
 
   let apiUrl = import.meta.env.VITE_APIURL
   let {netType} = useParams()
@@ -78,10 +81,13 @@ export const AdminNets = () => {
     <section>
       {!(config && nets) ? <Loader/> :
         <>
-          <h1>{netType == 'plastic' ? 'Пластиковая' : netType == 'knotless' ? 'Безузелковая' : ''}</h1>
-          <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo(`/admin/${netType}/card/add`)}>Добавить сетку</Button>
-          <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo(`/admin/${netType}/config`)}>Изменить конфигурацию</Button>
-          <h2 className={styles.AdminNets__netTitle}>Сетки</h2>
+          {adminNetsHeader ?
+            <>
+              <h1>{netType == 'plastic' ? 'Пластиковая' : netType == 'knotless' ? 'Безузелковая' : ''}</h1>
+              <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo(`/admin/${netType}/card/add`)}>Добавить сетку</Button>
+              <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo(`/admin/${netType}/config`)}>Изменить конфигурацию</Button>  
+            </> : null}
+          <h2 className={styles.AdminNets__netTitle}>{title}</h2>
           <AdminFilter netType={netType} config={config} searchOnClick={(values) => {
             let {price, quantity, ...selectValues} = values
             let newNets = Object.keys(values).length ? allNets.filter(net => {
@@ -124,9 +130,13 @@ export const AdminNets = () => {
                   {['length', 'width', 'cell', netType == 'plastic' ? 'color' : netType == 'knotless' ? 'thickness' : null].map(property =>
                     <div key={property} className={styles.AdminNet__netField}>{getNetData_byConfig(net, property)}</div>
                   )}
-                  {['price', 'quantity'].map(property => 
-                    <EditableProperty key={property} net={net} property={property}/>
-                  )}
+                  {editaeble ?
+                    ['price', 'quantity'].map(property => 
+                      <EditableProperty key={property} net={net} property={property}/>
+                    ) :
+                    ['price', 'quantity'].map(property => 
+                      <div key={property} className={styles.AdminNet__netField}>{getNetData_byConfig(net, property)}</div>
+                    )}
                 </div>
               )}
             </div>

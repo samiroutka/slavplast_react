@@ -11,6 +11,7 @@ import { AdminMain } from '@/pages/Admin/AdminMain/AdminMain.jsx'
 import { AdminCard } from '@/pages/Admin/AdminCard/AdminCard.jsx'
 import { AdminConfig } from '@/pages/Admin/AdminConfig/AdminConfig.jsx'
 import { AdminPassword } from '@/pages/Admin/AdminPassword/AdminPassword.jsx'
+import { AllNets } from '@/pages/Main/AllNets/AllNets';
 import { useEffect, useState } from 'react';
 import { context } from '@/context.js'
 import './App.scss'
@@ -25,11 +26,6 @@ function App() {
       return acc
     }, {})
   }
-
-  useEffect(() => {
-    console.log(document.cookie)
-    document.cookie = 'basket=; Max-Age=-1;';
-  })
 
   useEffect(() => {
     if (basket.length != 0) {
@@ -52,6 +48,7 @@ function App() {
             {/* --------------------------------------------------------------- */}
             <Route path="/" element={<MainMain/>}/>
             <Route path="/Sorting/:netType" element={<Sorting/>}/>
+            <Route path="/allnets/:netType" element={<AllNets/>}/>
             <Route path="/cards/:netType/:cellId/:cell" element={<Card/>}/>
             <Route path="/basket" element={<Basket/>}/>
           </Routes>
