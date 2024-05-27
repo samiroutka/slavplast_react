@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, memo } from 'react'
 import styles from './CardProperties.module.scss'
 import { MuiSelect } from '@/components/MuiSelect/MuiSelect';
 import no_image from './noImage.png'
-import { TextField, InputAdornment } from '@mui/material';
+import { LimitedTextField } from '@/components/LimitedTextField/LimitedTextField.jsx'
 
 let selectsSetOptions = {}
 
@@ -35,7 +35,6 @@ export const CardProperties = ({setSelectNetValues, nets, netsProperties, setIma
   let [priceValue, setPriceValue] = useState(0)
   let [maxQuantityValue, setMaxQuantityValue] = useState(0)
   let [quantityValue, setQuantityValue] = useState(0)
-  let [errorMessage, setErrorMessage] = useState('')
 
   let getSelectedProperties = () => {
     let selectedProperties = {}
@@ -159,17 +158,7 @@ export const CardProperties = ({setSelectNetValues, nets, netsProperties, setIma
       <div className={`${styles.Card__property} ${styles.Card__additionalProperty}`}>
         <strong>Количество</strong>
         <div className={styles.underline}></div>
-        <TextField disabled={!maxQuantityValue} className={styles.Card__property_input} variant="standard" value={quantityValue} onChange={event => {
-          if (event.target.value <= maxQuantityValue) {
-            setQuantityValue(event.target.value)
-            setErrorMessage('')
-          } else {
-            setErrorMessage(`У нас только ${maxQuantityValue}шт`)
-          }
-        }} type='number' dir="rtl" error={Boolean(errorMessage)} helperText={errorMessage} InputProps={{
-          startAdornment: <InputAdornment sx={{paddingLeft: '5%'}} position="start">шт</InputAdornment>,
-          inputProps: {min: 0, max: maxQuantityValue}
-        }}/>
+        <LimitedTextField maxValue={maxQuantityValue} value={quantityValue} setValue={setQuantityValue} className={styles.Card__property_input}/>
       </div>
       <div className={`${styles.Card__property} ${styles.Card__additionalProperty}`}>
         <strong>Стоимость</strong>

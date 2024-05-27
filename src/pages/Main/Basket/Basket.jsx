@@ -5,15 +5,15 @@ import { context } from '@/context.js'
 import { ChangeableInput } from '@/components/ChangeableInput/ChangeableInput';
 import { Button } from '@mui/material';
 
-let EditableProperty = ({defaultValue, ...otherProps}) => {
+let EditableProperty = ({defaultValue, netIndex, ...otherProps}) => {
   let {basket, setBasket} = useContext(context)
   let [isEdit, setIsEdit] = useState(false)
 
   return (
-    <ChangeableInput {...otherProps} type="number" isEdit={isEdit} onEdit={() => setIsEdit(true)} onConfirm={value => {
+    <ChangeableInput {...otherProps} textFieldProps={{className: styles.Basket__editableTextField}} maxValue={basket[netIndex].maxQuantity} type="number" isEdit={isEdit} onEdit={() => setIsEdit(true)} onConfirm={value => {
       setIsEdit(false)
-      setBasket(basket.map(net => {
-        if (net.quantity == defaultValue) {
+      setBasket(basket.map((net, index) => {
+        if (index == netIndex) {
           return {...net, quantity: parseInt(value), price: (net.price/net.quantity)*parseInt(value)}
         } else {
           return net
@@ -28,6 +28,7 @@ export const Basket = () => {
   let [totalPrice, setTotalPrice] = useState(0)
 
   useEffect(() => {
+    console.log(basket)
     let netTotalPrice = 0
     for (let net of basket) {
       netTotalPrice += net.price
@@ -44,8 +45,12 @@ export const Basket = () => {
           <div className={styles.Basket__netsWrapper}>
             <div className={styles.Basket__nets}>
               {basket.map(net => 
-                <div className={styles.Basket__net}>
+                <div key={net.price} className={styles.Basket__net}>
                   <img src={net.images[0]} className={styles.Basket__image}/>
+                  <p>
+                    тип
+                    <span>{net.netType}</span>
+                  </p>
                   <p>
                     ячейка
                     <span>{net.cell}мм</span>
@@ -58,19 +63,21 @@ export const Basket = () => {
                     ширина
                     <span>{net.width}м</span>
                   </p>
-                  <p>
-                    цвет
-                    <span>{net.color}</span>
-                  </p>
+                  {net.color ? 
+                    <p>
+                      цвет
+                      <span>{net.color}</span>
+                    </p>
+                  : null}
                   <div>
                     кол-во
-                    <EditableProperty className={styles.Basket__editableProperty} defaultValue={net.quantity}/>
+                    <EditableProperty className={styles.Basket__editableProperty} netIndex={basket.indexOf(net)} defaultValue={net.quantity}/>
                   </div>
                   <p>
                     цена
                     <span>{net.price}₽</span>
                   </p>
-                  <Button onClick={() => setBasket(basket.filter(element => element != net))} variant='outlined' color='error'>удалить</Button>
+                  <Button onClick={() => setBasket(basket.filter(element => basket.indexOf(element) != basket.indexOf(net)))} variant='outlined' color='error'>удалить</Button>
                 </div>)}
             </div>
             <div className={styles.Basket__results}>

@@ -5,10 +5,10 @@ import { Header } from '@/components/Header/Header'
 import { Loader } from '@/components/Loader/Loader.jsx'
 import { Slider } from '@/components/Slider/Slider'
 import { CardProperties } from '@/components/CardProperties/CardProperties.jsx'
-import { Button } from '@mui/material'
+import { AddToBasket } from '@/components/AddToBasket/AddToBasket';
 import { context } from '@/context.js'
 
-export const Card = () => {
+export const Card = () => { // типо калькулятора (сборщик сетки)
   let apiUrl = import.meta.env.VITE_APIURL
   let {netType, cellId, cell} = useParams()
   let {basket, setBasket} = useContext(context)
@@ -62,34 +62,9 @@ export const Card = () => {
 
   let [images, setImages] = useState(null)
 
-  let basketButtonError = () => {
-    setBasketButtonColor('error')
-    setBasketButtonValue('выберите свойства')
-    setTimeout(() => {
-      setBasketButtonColor('primary')
-      setBasketButtonValue('добавить в корзину')
-    }, 2000)
-  }
-
-  let basketSuccesButton = () => {
-    setBasketButtonColor('success')
-    setBasketButtonValue('в корзине')
-    setTimeout(() => {
-      setBasketButtonColor('primary')
-      setBasketButtonValue('добавить в корзину')
-    }, 2000)
-  }
-
-  let [basketButtonValue, setBasketButtonValue] = useState('добавить в корзину') 
-  let [basketButtonColor, setBasketButtonColor] = useState('primary')
-  let elementToBasketRef = useRef()
-  let [toBasket, setToBasket] = useState(false)
-  let animationDuration = 1000
-  let getBasketAnimationСoordinates = () => {
-    let basket = document.querySelector('#basket')
-    let x = basket.offsetLeft - elementToBasketRef.current.offsetLeft
-    let y = basket.offsetTop - elementToBasketRef.current.offsetTop
-    return [x, y]
+  let netTypesLabels = {
+    'plastic': 'пластиковая',
+    'knotless': 'безузелковая',
   }
 
   return (
@@ -101,26 +76,7 @@ export const Card = () => {
           <div className={styles.Card__info}>
             <h1>Сетка {netType == 'plastic' ? 'пластиковая' : 'безузелковая'} {cell} мм</h1>
             <CardProperties setSelectNetValues={setSelectNetValues} nets={nets} netsProperties={netsProperties} setImages={setImages}/>
-            <div style={{width: 'fit-content'}} >
-              <Button color={basketButtonColor} onClick={() => {
-                if (selectNetValues.price == 0) {
-                  basketButtonError()
-                } else {
-                  setBasket([...basket, {...getDataUsingConfig(selectNetValues),  images: images}])
-                  // ----------animation---------------
-                  setToBasket(true)
-                  setTimeout(() => {
-                    setToBasket(false)
-                    basketSuccesButton() // меняем цвет и текст кнопки
-                  }, animationDuration)
-                }
-              }} className={styles.Card__basketButton} variant='outlined'>{basketButtonValue}</Button>
-              <div ref={elementToBasketRef} style={toBasket ? {
-                opacity: 0.5,
-                transition: `all ${animationDuration}ms ease-in-out`,
-                transform: `translate(${getBasketAnimationСoordinates()[0]}px, ${getBasketAnimationСoordinates()[1]}px)`
-              } : null} className={styles.Card__elementToBasket}></div>
-            </div>
+            <AddToBasket errorProviso={selectNetValues ? selectNetValues.price == 0 : null} onSuccess={() => setBasket([...basket, {...getDataUsingConfig(selectNetValues),  images: images, netType: netTypesLabels[netType]}])}/>
             <div className={styles.Card__description} dangerouslySetInnerHTML={{ __html: cellDescription ? cellDescription : 'Это великолепная ячейка' }}></div>
           </div>
         </section>}

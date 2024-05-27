@@ -1,7 +1,6 @@
 
 .Basket__netsWrapper{
   display: flex;
-  gap: 5vw;
 }
 
 .Basket__nets{
@@ -12,11 +11,11 @@
 }
 
 .Basket__net{
-  padding: 0 1%;
+  padding: 1%;
   width: fit-content;
   display: flex;
   align-items: center;
-  gap: 2vw;
+  gap: 1.5vw;
 
   background-color: rgba(45, 199, 3, .3);
   border-radius: 1vw;
@@ -31,18 +30,17 @@
   p{
     display: flex;
     flex-direction: column;
-    align-items: center;
   }
 }
 
 .Basket__image{
-  padding: 1vw;
   height: 10vw;
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 1vw;
 }
 
-.Basket__editableProperty{
-  max-width: 10vw;
+.Basket__editableTextField{
+  width: 10vw;
 }
 
 .Basket__results{

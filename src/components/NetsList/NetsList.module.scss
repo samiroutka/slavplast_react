@@ -1,22 +1,22 @@
 
 
-.AdminNets__netTitle, .AdminNet__netField{
+.NetsList__netTitle, .AdminNet__netField{
   text-align: center;
 }
 
-.AdminNets__addNet, .AdminNets__changeConfig{
+.NetsList__addNet, .NetsList__changeConfig{
   margin-top: 2%;
 }
-.AdminNets__changeConfig{
+.NetsList__changeConfig{
   margin-left: 2%;
 }
 
-.AdminNets__nets{
+.NetsList__nets{
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-.AdminNets__net, .AdminNets__net_titles{
+.NetsList__net, .NetsList__net_titles{
   margin: 0 auto;
   margin-bottom: 1%;
   width: 95%;
@@ -43,14 +43,14 @@
     box-sizing: border-box;
   }
 }
-.AdminNets__net_titles{
+.NetsList__net_titles{
   height: 5vw;
 }
-.AdminNets__net:hover{
+.NetsList__net:hover{
   cursor: pointer;
   transform: scale(1.02);
   box-shadow: 0 0 5px;
 }
-.AdminNets__net_titles{
+.NetsList__net_titles{
   background-color: rgba(45, 199, 3, .8);
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router';
-import styles from './AdminNets.module.scss'
+import styles from './NetsList.module.scss'
 import { AdminFilter } from '@/components/AdminFilter/AdminFilter'; 
 import { Loader } from '@/components/Loader/Loader';
 import { useNavigate } from 'react-router'
@@ -8,8 +8,9 @@ import { Button } from '@mui/material'
 import { ChangeableInput } from '@/components/ChangeableInput/ChangeableInput';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import noImage from './noImage.png'
 
-export const AdminNets = ({editaeble = true, adminNetsHeader = true, title = 'Сетки'}) => {
+export const NetsList = ({netUrlType = 'admin', editaeble = true, NetsListHeader = true, title = 'Сетки'}) => {
   let EditableProperty = ({net, property}) => {
     let [value, setValue] = useState(getNetData_byConfig(net, property))
     let [isEdit, setIsEdit] = useState(false)
@@ -32,8 +33,14 @@ export const AdminNets = ({editaeble = true, adminNetsHeader = true, title = 'С
   // similar to range() in python
   const range = (start, end, step = 1) => Array.from({ length: Math.ceil((end - start) / step) }, (_, i) => start + i * step);
 
+  let [netUrl, setNetUrl] = useState('')
+
   useEffect(() => {
-    console.log(netType)
+    if (netUrlType == 'admin') {
+      setNetUrl(`/admin/${netType}/card`)
+    } else if (netUrlType == 'client') {
+      setNetUrl(`/nets/${netType}`)
+    }
   }, [])
 
   let apiUrl = import.meta.env.VITE_APIURL
@@ -81,13 +88,13 @@ export const AdminNets = ({editaeble = true, adminNetsHeader = true, title = 'С
     <section>
       {!(config && nets) ? <Loader/> :
         <>
-          {adminNetsHeader ?
+          {NetsListHeader ?
             <>
               <h1>{netType == 'plastic' ? 'Пластиковая' : netType == 'knotless' ? 'Безузелковая' : ''}</h1>
-              <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminNets__addNet} onClick={() => navigateTo(`/admin/${netType}/card/add`)}>Добавить сетку</Button>
-              <Button variant='outlined' startIcon={<EditIcon/>} className={styles.AdminNets__changeConfig} onClick={() => navigateTo(`/admin/${netType}/config`)}>Изменить конфигурацию</Button>  
+              <Button variant='contained' startIcon={<AddIcon/>} className={styles.NetsList__addNet} onClick={() => navigateTo(`/admin/${netType}/card/add`)}>Добавить сетку</Button>
+              <Button variant='outlined' startIcon={<EditIcon/>} className={styles.NetsList__changeConfig} onClick={() => navigateTo(`/admin/${netType}/config`)}>Изменить конфигурацию</Button>  
             </> : null}
-          <h2 className={styles.AdminNets__netTitle}>{title}</h2>
+          <h2 className={styles.NetsList__netTitle}>{title}</h2>
           <AdminFilter netType={netType} config={config} searchOnClick={(values) => {
             let {price, quantity, ...selectValues} = values
             let newNets = Object.keys(values).length ? allNets.filter(net => {
@@ -118,15 +125,15 @@ export const AdminNets = ({editaeble = true, adminNetsHeader = true, title = 'С
             setNets(allNets)
           }}/>
           {nets.length != 0 ?
-            <div className={styles.AdminNets__nets}>
-              <div className={styles.AdminNets__net_titles}>
+            <div className={styles.NetsList__nets}>
+              <div className={styles.NetsList__net_titles}>
                 {['фото', 'длина', 'ширина', 'ячейки', netType == 'plastic' ? 'цвет' : netType == 'knotless' ? 'толщина' : null, 'цена', 'остатки'].map(label => 
                   <div key={label} className={styles.AdminNet__netField}>{label}</div>
                 )}
               </div>
               {nets.map(net => 
-                <div className={styles.AdminNets__net} key={net.id} onClick={() => {navigateTo(`/admin/${netType}/card/${net.id}`)}}>
-                  <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : ''} alt='-'/>
+                <div className={styles.NetsList__net} key={net.id} onClick={() => {navigateTo(`${netUrl}/${net.id}`)}}>
+                  <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : noImage} alt='-'/>
                   {['length', 'width', 'cell', netType == 'plastic' ? 'color' : netType == 'knotless' ? 'thickness' : null].map(property =>
                     <div key={property} className={styles.AdminNet__netField}>{getNetData_byConfig(net, property)}</div>
                   )}

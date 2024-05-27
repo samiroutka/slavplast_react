@@ -12,6 +12,7 @@ import { AdminCard } from '@/pages/Admin/AdminCard/AdminCard.jsx'
 import { AdminConfig } from '@/pages/Admin/AdminConfig/AdminConfig.jsx'
 import { AdminPassword } from '@/pages/Admin/AdminPassword/AdminPassword.jsx'
 import { AllNets } from '@/pages/Main/AllNets/AllNets';
+import { Net } from '@/pages/Main/Net/Net';
 import { useEffect, useState } from 'react';
 import { context } from '@/context.js'
 import './App.scss'
@@ -28,9 +29,7 @@ function App() {
   }
 
   useEffect(() => {
-    if (basket.length != 0) {
-      document.cookie=`basket=${JSON.stringify(basket)}`
-    }
+    document.cookie=`basket=${JSON.stringify(basket)}`
   }, [basket])
 
   return (
@@ -50,6 +49,7 @@ function App() {
             <Route path="/Sorting/:netType" element={<Sorting/>}/>
             <Route path="/allnets/:netType" element={<AllNets/>}/>
             <Route path="/cards/:netType/:cellId/:cell" element={<Card/>}/>
+            <Route path="/nets/:netType/:id" element={<Net/>}/>
             <Route path="/basket" element={<Basket/>}/>
           </Routes>
         </context.Provider>

@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './AllNets.module.scss'
-import { AdminNets } from '@/components/AdminNets/AdminNets'
+import { NetsList } from '@/components/NetsList/NetsList'
 import { Header } from '@/components/Header/Header';
 import { useParams } from 'react-router';
 
@@ -14,7 +14,7 @@ export const AllNets = () => {
   return (
     <>
       <Header/>
-      <AdminNets editaeble={false} adminNetsHeader={false} title={netTypeLabels[netType]}/>
+      <NetsList netUrlType='client' editaeble={false} NetsListHeader={false} title={netTypeLabels[netType]}/>
     </>
   )
 }

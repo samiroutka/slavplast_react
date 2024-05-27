@@ -1,0 +1,14 @@
+
+.AddToBasket__basketButton{
+  margin: 5% 0;
+}
+
+.AddToBasket__element{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: black;
+  opacity: 0;
+  transform: translateX(-100%);
+}

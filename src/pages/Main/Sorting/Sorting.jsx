@@ -27,18 +27,22 @@ export const Sorting = () => {
       {!cells ? <Loader/> :
         cells.length > 0 ? 
         <section className={styles.Sorting}>
-          <div onClick={() => navigateTo(`/allnets/${netType}`)} className={styles.Sorting__element}>
-            <p>все сетки</p>
+          <h2 className='title'>Ячейки</h2>
+          <div className={styles.Sorting__cells}>
+            <div onClick={() => navigateTo(`/allnets/${netType}`)} className={styles.Sorting__element}>
+              <p>все сетки</p>
+            </div>
+            {cells.map(cell => 
+              <div className={styles.Sorting__element} key={cell.id} onClick={() => {
+                navigateTo(`/cards/${netType}/${cell.id}/${cell.cell}`)
+              }}>
+                <img src={test_img} alt="" />
+                <p>{cell.cell}</p>
+              </div>
+            )}
           </div>
-          {cells.map(cell => 
-            <div className={styles.Sorting__element} key={cell.id} onClick={() => {
-              navigateTo(`/cards/${netType}/${cell.id}/${cell.cell}`)
-            }}>
-              <img src={test_img} alt="" />
-              <p>{cell.cell}</p>
-            </div>  
-          )}
-        </section> : <p>Никаких ячеек пока нету (</p>}
+        </section>
+      : <p>Никаких ячеек пока нету (</p>}
     </>
   )
 }
