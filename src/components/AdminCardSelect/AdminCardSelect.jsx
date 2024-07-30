@@ -32,9 +32,9 @@ export const AdminCardSelect = React.forwardRef(({className, cleannessTest, vari
           value={selectValue}
           onChange={handleChange}
         >
-          {variants.map(variant => 
+          {variants ? variants.map(variant => 
               <MenuItem key={variant.id} value={variant.id}>{variant[property]}</MenuItem>
-          )}
+          ): null}
         </Select>
       </FormControl>
     </div>

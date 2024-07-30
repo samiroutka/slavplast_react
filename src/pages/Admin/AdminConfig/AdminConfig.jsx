@@ -149,7 +149,8 @@ export const AdminConfig = () => {
     setIsLoading(true)
     let type = Object.keys(item)
     type.splice(type.indexOf('id'), 1)
-    type = type[0]
+    type = type[0] == 'description' ? 'cell' : type[0] // не уверен что оптимальное решение, но пока сойдет
+    console.log(type)
     let response = await fetch(`${apiUrl}/config/${netType}/${type}/${item.id}${query ? query : ''}`, {method: 'delete'})
     if (!await response.json()) {
       showAlert(alertExistingNetRef.current, 4000)

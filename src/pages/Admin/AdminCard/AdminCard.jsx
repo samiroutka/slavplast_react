@@ -21,6 +21,7 @@ let getSelectFields = (net) => {
   delete new_net['images']
   delete new_net['price']
   delete new_net['quantity']
+  delete new_net['description']
   return new_net
 }
 
