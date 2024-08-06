@@ -28,7 +28,6 @@ export const Basket = () => {
   let [totalPrice, setTotalPrice] = useState(0)
 
   useEffect(() => {
-    console.log(basket)
     let netTotalPrice = 0
     for (let net of basket) {
       netTotalPrice += net.price

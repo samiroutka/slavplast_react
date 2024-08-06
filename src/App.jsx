@@ -19,6 +19,7 @@ import './App.scss'
 
 function App() {
   let [basket, setBasket] = useState(getCookie()['basket'] ? JSON.parse(getCookie()['basket']) : [])
+  let [adminpassword, setAdminpassword] = useState(getCookie()['adminpassword'])
 
   function getCookie() {
     return document.cookie.split('; ').reduce((acc, item) => {
@@ -29,21 +30,24 @@ function App() {
   }
 
   useEffect(() => {
-    document.cookie=`basket=${JSON.stringify(basket)}`
+    document.cookie=`basket=${JSON.stringify(basket)};path=/`
   }, [basket])
 
   return (
     <StyledEngineProvider injectFirst>
       <BrowserRouter> 
-        <context.Provider value={{basket, setBasket}}>
+        <context.Provider value={{basket, setBasket, adminpassword, setAdminpassword}}>
           <Routes>
             <Route path="/admin/password" element={<AdminPassword/>}/>
-            <Route path="/admin/:netType" element={<AdminMain/>}/>
-            <Route path="/admin/:netType" element={<AdminMain/>}/>
-            <Route path="/admin/:netType/config" element={<AdminConfig/>}/>
-            <Route path="/admin/:netType/config" element={<AdminConfig/>}/>
-            <Route path="/admin/:netType/card/add" element={<AdminCard/>}/>
-            <Route path="/admin/:netType/card/:id" element={<AdminCard/>}/>
+            {adminpassword ?
+            <>
+              <Route path="/admin/:netType" element={<AdminMain/>}/>
+              <Route path="/admin/:netType" element={<AdminMain/>}/>
+              <Route path="/admin/:netType/config" element={<AdminConfig/>}/>
+              <Route path="/admin/:netType/config" element={<AdminConfig/>}/>
+              <Route path="/admin/:netType/card/add" element={<AdminCard/>}/>
+              <Route path="/admin/:netType/card/:id" element={<AdminCard/>}/>
+            </> : null}
             {/* --------------------------------------------------------------- */}
             <Route path="/" element={<MainMain/>}/>
             <Route path="/Sorting/:netType" element={<Sorting/>}/>
