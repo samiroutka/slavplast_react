@@ -7,6 +7,7 @@ import { Loader } from '@/components/Loader/Loader';
 import { Slider } from '@/components/Slider/Slider.jsx'
 import { AddToBasket } from '@/components/AddToBasket/AddToBasket';
 import { LimitedTextField } from '@/components/LimitedTextField/LimitedTextField.jsx';
+import { Recommendations } from '@/components/Recommendations/Recommendations';
 import noImage from './noImage.png'
 
 export const Net = () => {
@@ -17,8 +18,8 @@ export const Net = () => {
   let {basket, setBasket} = useContext(context)
 
   let getNet = async () => {
-    let respone = await fetch(`${apiUrl}/net/${netType}/${id}`)
-    setNet(await respone.json())
+    let response = await fetch(`${apiUrl}/net/${netType}/${id}`)
+    setNet(await response.json())
   }
 
   let getConfig = async () => {
@@ -109,6 +110,7 @@ export const Net = () => {
               netType: netTypesLabels[netType],
             }])}/>
           </div>
+          <Recommendations/>
         </section>
       : <Loader/>}
     </>
