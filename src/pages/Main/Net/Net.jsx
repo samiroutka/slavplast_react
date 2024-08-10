@@ -13,33 +13,11 @@ export const Net = () => {
   let apiUrl = import.meta.env.VITE_APIURL
   let {netType, id} = useParams()
   let [net, setNet] = useState()
-  let [config, setConfig] = useState()
   let {basket, setBasket} = useContext(context)
 
   let getNet = async () => {
     let respone = await fetch(`${apiUrl}/net/${netType}/${id}`)
     setNet(await respone.json())
-  }
-
-  let getConfig = async () => {
-    let response = await fetch(`${apiUrl}/config/${netType}`)
-    let responseData = await response.json()
-    response.ok ? setConfig(responseData) : setConfig(false)
-  }
-
-  let getDataWrapper = async () => {
-    await getNet()
-    await getConfig()
-  }
-
-  let getNetPropertiesByConfig = () => {
-    let netProperties = {}
-    for (let [key, value] of Object.entries(net)) {
-      if (config[key]) {
-        netProperties[key] = config[key].find(element => element.id == value)[key]
-      }
-    }
-    setNet({...net, ...netProperties})
   }
 
   let netTypesLabels = {
@@ -48,14 +26,8 @@ export const Net = () => {
   }
 
   useEffect(() => {
-    getDataWrapper()
+    getNet()
   }, [])
-
-  useEffect(() => {
-    if (net && config && !(typeof net.cell == 'string')) { // делаем проверку на строку, чтобы не было безконечного setNet из-за useEffect с зависимостями [net, config]
-      getNetPropertiesByConfig()
-    }
-  }, [net, config])
 
   let [quantity, setQuantity] = useState(1)
 
@@ -68,28 +40,18 @@ export const Net = () => {
             <Slider className={styles.Net__slider} images={net.images}/>  
           : <img className={styles.net__noimage} src={noImage}/>}
           <div className={styles.Net__properties}>
-            <div className={styles.Net__property}>
-              <span>ячейка</span>
-              <span className={styles.underline}></span>
-              <span>{net.cell}</span>
-            </div>
-            <div className={styles.Net__property}>
-              <span>длина</span>
-              <span className={styles.underline}></span>
-              <span>{net.length}</span>
-            </div>
-            <div className={styles.Net__property}>
-              <span>ширина</span>
-              <span className={styles.underline}></span>
-              <span>{net.width}</span>
-            </div>
-            {net.color ? 
-              <div className={styles.Net__property}>
-                <span>цвет</span>
+            {Object.entries({
+              'ячейка': 'cell',
+              'длина': 'length',
+              'ширина': 'width',
+              ...(net.color && {'цвет': 'color'}) // классный способ: оператор && выполняет выражение после него только если выражение до него истинно
+            }).map(([key, value]) => 
+              <div key={value} className={styles.Net__property}>
+                <span>{key}</span>
                 <span className={styles.underline}></span>
-                <span>{net.color}</span>
+                <span>{net[value]}</span>
               </div>
-            : null}
+            )}
             <div className={styles.Net__property}>
               <span>количество</span>
               <span className={styles.underline}></span>

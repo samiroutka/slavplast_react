@@ -47,22 +47,22 @@ export const CardProperties = ({setSelectNetValues, nets, netsProperties, setIma
   let checkAndSetAvailableProperties = (selectProperty) => { // устанавливам доступные свойства по доступным сеткам
     // получаем доступные сетки, по выбранным свойствам
     let selectedProperties = getSelectedProperties()
-    let availableNets = []
+    let innerAvailableNets = []
     for (let property of Object.keys(selectedProperties)) {
       if (selectedProperties[property]) {
         let netsByProperty = nets.filter(net => net[property] == selectedProperties[property])
-        if (availableNets.length == 0) {
-          availableNets = netsByProperty
+        if (innerAvailableNets.length == 0) {
+          innerAvailableNets = netsByProperty
         } else {
-          availableNets = availableNets.filter(net => netsByProperty.includes(net))
+          innerAvailableNets = innerAvailableNets.filter(net => netsByProperty.includes(net))
         }
       }
     }
-    setAvailableNets(availableNets)
+    setAvailableNets(innerAvailableNets)
 
     // преобразуем объект из сеток в объект из доступных свойств
     let newAvailableProperties = {}
-    for (let net of availableNets) {
+    for (let net of innerAvailableNets) {
       for (let property of propertiesOrder.slice(propertiesOrder.indexOf(selectProperty)+1)) {
         newAvailableProperties[property] = newAvailableProperties[property] ? 
         new Set([...newAvailableProperties[property], net[property]]) : new Set([net[property]])
@@ -152,7 +152,7 @@ export const CardProperties = ({setSelectNetValues, nets, netsProperties, setIma
         <div className={styles.Card__property} key={property}>
           <strong>{propertyLabels[property]}</strong>
           <div className={styles.underline}></div>
-          <MuiSelect ref={selectsRefs[property]} disabled={disabledSelects[property]} getSelectSetOption={getSelectSetOption} availableProperties={availableProperties ? availableProperties[property] : false} property={property} onChangeSelect={onChangeSelect} netsProperties={netsProperties}/>
+          <MuiSelect ref={selectsRefs[property]} disabled={disabledSelects[property]} getSelectSetOption={getSelectSetOption} availableVariantsOfProperty={availableProperties ? availableProperties[property] : false} property={property} onChangeSelect={onChangeSelect} netsProperties={netsProperties}/>
         </div>
       )}
       <div className={`${styles.Card__property} ${styles.Card__additionalProperty}`}>

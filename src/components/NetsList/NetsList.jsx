@@ -12,7 +12,7 @@ import noImage from './noImage.png'
 
 export const NetsList = ({netUrlType = 'admin', editaeble = true, NetsListHeader = true, title = 'Сетки'}) => {
   let EditableProperty = ({net, property}) => {
-    let [value, setValue] = useState(getNetData_byConfig(net, property))
+    let [value, setValue] = useState(net[property])
     let [isEdit, setIsEdit] = useState(false)
 
     return (
@@ -66,16 +66,8 @@ export const NetsList = ({netUrlType = 'admin', editaeble = true, NetsListHeader
     await getConfig()
   }
 
-  // Возвращает значение свойства по конфигу, если оно из конфига (price и quantity не по конфигу)
-  let getNetData_byConfig = (net, type) => {
-    if (config[type]) {
-      return config[type].filter(item => item.id == net[type])[0][type]
-    } else {
-      return net[type]
-    }
-  }
-
   useEffect(() => {
+    getNets()
     getData_wrapper()
     // На изменение url обнуляет config и занова запрашивает его
     window.navigation.addEventListener("navigate", async (event) => {
@@ -83,7 +75,7 @@ export const NetsList = ({netUrlType = 'admin', editaeble = true, NetsListHeader
       await getData_wrapper()
     })
   }, [])
-  
+
   return (
     <section>
       {!(config && nets) ? <Loader/> :
@@ -135,14 +127,14 @@ export const NetsList = ({netUrlType = 'admin', editaeble = true, NetsListHeader
                 <div className={styles.NetsList__net} key={net.id} onClick={() => {navigateTo(`${netUrl}/${net.id}`)}}>
                   <img className={styles.AdminNet__netField} src={net.images[0] ? net.images[0] : noImage} alt='-'/>
                   {['length', 'width', 'cell', netType == 'plastic' ? 'color' : netType == 'knotless' ? 'thickness' : null].map(property =>
-                    <div key={property} className={styles.AdminNet__netField}>{getNetData_byConfig(net, property)}</div>
+                    <div key={property} className={styles.AdminNet__netField}>{net[property]}</div>
                   )}
                   {editaeble ?
                     ['price', 'quantity'].map(property => 
                       <EditableProperty key={property} net={net} property={property}/>
                     ) :
                     ['price', 'quantity'].map(property => 
-                      <div key={property} className={styles.AdminNet__netField}>{getNetData_byConfig(net, property)}</div>
+                      <div key={property} className={styles.AdminNet__netField}>{net[property]}</div>
                     )}
                 </div>
               )}

@@ -44,7 +44,7 @@ export const Basket = () => {
           <div className={styles.Basket__netsWrapper}>
             <div className={styles.Basket__nets}>
               {basket.map(net => 
-                <div key={net.price} className={styles.Basket__net}>
+                <div key={net.price+Math.random()*100000} className={styles.Basket__net}>
                   <img src={net.images[0]} className={styles.Basket__image}/>
                   <p>
                     тип

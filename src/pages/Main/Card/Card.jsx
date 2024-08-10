@@ -18,20 +18,23 @@ export const Card = () => { // типо калькулятора (сборщик
   let [cellDescription, setCellDescription] = useState()
   let [selectNetValues, setSelectNetValues] = useState()
 
-  let getNetsProperties = (nets, config) => {
+  let getNetsProperties = (nets) => {
     let newNetsProperties = {}
+    nets = nets.map(net => { // удаляем ненужные свойства (или свойства которые не в config)
+      let {id, images, price, quantity, ...otherProperties} = net
+      return otherProperties
+    })
     for (let net of nets) {
-      for (let unnecessaryProperty of ['id', 'images', 'price', 'quantity']) {
-        delete net[unnecessaryProperty]
-      }
-      for (let property of Object.keys(net)) {
-        if (newNetsProperties[property]) {
-          newNetsProperties[property][net[property]] = config[property].filter(variant => variant.id == net[property])[0][property]
+      for (let [key, value] of Object.entries(net)) {
+        if (newNetsProperties[key]) {
+          newNetsProperties[key] = [...newNetsProperties[key], value]
         } else {
-          newNetsProperties[property] = {}
-          newNetsProperties[property][net[property]] = config[property].filter(variant => variant.id == net[property])[0][property]
+          newNetsProperties[key] = [value]
         }
       }
+    }
+    for (let [key, value] of Object.entries(newNetsProperties)) {
+      newNetsProperties[key] = Array.from(new Set(newNetsProperties[key]))
     }
     return newNetsProperties
   }
@@ -46,14 +49,6 @@ export const Card = () => { // типо калькулятора (сборщик
     setConfig(config)
     setCellDescription(config.cell.filter(item => item.cell == cell)[0].description)
     setNetsProperties(getNetsProperties(JSON.parse(JSON.stringify(nets)), config))
-  }
-
-  let getDataUsingConfig = ({quantity, price, images, ...net}) => {
-    let finalNet = {price, quantity}
-    for (let [key, value] of Object.entries(net)) {
-      finalNet[key] = config[key].find(element => element.id == value)[key]
-    }
-    return finalNet
   }
 
   useEffect(() => {
@@ -76,7 +71,7 @@ export const Card = () => { // типо калькулятора (сборщик
           <div className={styles.Card__info}>
             <h1>Сетка {netType == 'plastic' ? 'пластиковая' : 'безузелковая'} {cell} мм</h1>
             <CardProperties setSelectNetValues={setSelectNetValues} nets={nets} netsProperties={netsProperties} setImages={setImages}/>
-            <AddToBasket errorProviso={selectNetValues ? selectNetValues.price == 0 : null} onSuccess={() => setBasket([...basket, {...getDataUsingConfig(selectNetValues),  images: images, netType: netTypesLabels[netType]}])}/>
+            <AddToBasket errorProviso={selectNetValues ? selectNetValues.price == 0 : null} onSuccess={() => setBasket([...basket, {...selectNetValues,  images: images, netType: netTypesLabels[netType]}])}/>
             <div className={styles.Card__description} dangerouslySetInnerHTML={{ __html: cellDescription ? cellDescription : 'Это великолепная ячейка' }}></div>
           </div>
         </section>}

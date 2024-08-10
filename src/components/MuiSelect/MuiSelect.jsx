@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { MenuItem, Select, FormControl } from '@mui/material';
 
-export const MuiSelect = React.forwardRef(({property, disabled, onChangeSelect, availableProperties, getSelectSetOption, netsProperties}, ref) => {
+export const MuiSelect = React.forwardRef(({property, disabled, onChangeSelect, availableVariantsOfProperty, getSelectSetOption, netsProperties}, ref) => {
   const [option, setOption] = useState('')
 
   useEffect(() => {
@@ -21,8 +21,8 @@ export const MuiSelect = React.forwardRef(({property, disabled, onChangeSelect, 
         onChange={(event) => {
           setOption(event.target.value)
         }}>
-        {Object.entries(netsProperties[property]).map(([key, value]) => 
-          <MenuItem key={key} value={key} disabled={availableProperties ? !availableProperties.includes(parseInt(key)) ? true : false : false}>{value}</MenuItem>
+        {Object.values(netsProperties[property]).map((value) => 
+          <MenuItem key={value} value={value} disabled={availableVariantsOfProperty ? (availableVariantsOfProperty.includes(value) ? false : true) : false}>{value}</MenuItem>
         )}
       </Select>
     </FormControl>

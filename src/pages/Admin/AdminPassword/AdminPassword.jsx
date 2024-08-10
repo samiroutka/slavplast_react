@@ -39,7 +39,7 @@ export const AdminPassword = () => {
         <TextField value={value} error={Boolean(inputError)} helperText={inputError} onChange={() => setValue(event.target.value)} className={styles.AdminPassword__input} label='пароль' variant='standard'/>
         <Button variant='contained' onClick={async () => {
           if (value == password) {
-            document.cookie=`adminpassword=true;max-age=30`
+            document.cookie=`adminpassword=true;max-age=300`
             setAdminpassword(true)
             navigateTo('/admin/plastic')
           } else {

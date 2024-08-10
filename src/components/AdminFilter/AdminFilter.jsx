@@ -40,7 +40,10 @@ export const AdminFilter = ({netType, config, searchOnClick, clearOnClick}) => {
       <Button size='small' variant='contained' onClick={searchOnClick ? () => {
         let selectsValues = {}
         for (let select of document.querySelectorAll(`.${styles.AdminFilter__filter}`)) {
-          selectsValues[select.querySelector('label').id] = parseInt(select.querySelector('input').value)
+          let property = select.querySelector('label').id
+          let idOfSelectedProperty = parseInt(select.querySelector('input').value)
+          selectsValues[property] = config[property].find(item => item.id == idOfSelectedProperty) ? 
+          config[property].find(item => item.id == idOfSelectedProperty)[property] : null
         }
         let values = {
           price: `${priceMin}-${priceMax}` == '-' ? false : `${priceMin}-${priceMax}`,
