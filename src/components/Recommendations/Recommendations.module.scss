@@ -2,21 +2,23 @@
 .Recommendations{
   position: absolute;
   bottom: 0;
-  padding: 2%;
-  width: 60%;
+  z-index: 10;
+  padding: 1% 2.5%;
+  width: fit-content;
 
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(211, 238, 205);
   border-radius: 15px 15px 0 0;
 
   h3{
     margin: 0;
+    margin-bottom: 2%;
   }
 }
 
 .Recommendations__close{
   position: absolute;
-  top: 1vw;
-  right: 1vw;
+  top: 0;
+  right: 0;
 }
 
 .Recommendations__cards{
@@ -25,17 +27,27 @@
 }
 
 .Recommendations__card{
-  margin-top: 3%;
-  width: 7vw;
+  width: fit-content;
   height: 10vw;
-
-  p{
-    margin: 0;
-  }
 }
 
-.Recommendations__cardImage{
-  width: 100%;
-  height: 70%;
-  object-fit: cover;
+.Recommendations__cardActionArea{
+  height: 100%;
+  position: relative;
+
+  .Recommendations__cardImage{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  p{
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    width: 100%;
+    margin: 0;
+    padding: 5% 0;
+    text-align: center;
+    background-color: rgba(128, 128, 128, .6);
+  }
 }

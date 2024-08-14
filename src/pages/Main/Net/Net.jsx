@@ -28,7 +28,7 @@ export const Net = () => {
 
   useEffect(() => {
     getNet()
-  }, [])
+  }, [id])
 
   let [quantity, setQuantity] = useState(1)
 
@@ -36,7 +36,7 @@ export const Net = () => {
     <>
       <Header/>
       {net ?
-        <section className={styles.Net}>
+        <section className={styles.Net} key={id}>
           {net.images.length > 0 ?
             <Slider className={styles.Net__slider} images={net.images}/>  
           : <img className={styles.net__noimage} src={noImage}/>}
@@ -72,7 +72,7 @@ export const Net = () => {
               netType: netTypesLabels[netType],
             }])}/>
           </div>
-          <Recommendations/>
+          <Recommendations currentNetId={net.id}/>
         </section>
       : <Loader/>}
     </>
