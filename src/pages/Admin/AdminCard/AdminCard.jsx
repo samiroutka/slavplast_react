@@ -192,11 +192,12 @@ export const AdminCard = () => {
         <MyAlert ref={alertRefs['validation']} severity="info">Заполните все поля</MyAlert>
         <MyAlert ref={alertRefs['error']} severity="error">Что-то пошло не так</MyAlert>
         {configValidation?
-            id ? <>
-                 <Button variant='contained' startIcon={<EditIcon/>} className={styles.AdminCard_saveButton} onClick={() => addOrUpdateNet('update')}>Сохранить</Button>
-                 <Button variant='contained' startIcon={<DeleteIcon/>} className={styles.AdminCard_deleteButton} onClick={deleteNet}>Удалить</Button>
-               </>
-             : <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminCard_addButton} onClick={() => addOrUpdateNet('add')}>Добавить</Button> 
+          id ? 
+            <>
+              <Button variant='contained' startIcon={<EditIcon/>} className={styles.AdminCard_saveButton} onClick={() => addOrUpdateNet('update')}>Сохранить</Button>
+              <Button variant='contained' startIcon={<DeleteIcon/>} className={styles.AdminCard_deleteButton} onClick={deleteNet}>Удалить</Button>
+            </>
+          : <Button variant='contained' startIcon={<AddIcon/>} className={styles.AdminCard_addButton} onClick={() => addOrUpdateNet('add')}>Добавить</Button> 
         : <></>}
       </section>} 
     </>

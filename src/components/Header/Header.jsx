@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef, useContext} from 'react'
 import { useNavigate } from 'react-router'
+import { context } from '@/context.js'
 import styles from './Header.module.scss'
 import logo from './images/logo.png'
 import whatsapp from './images/whatsapp_icon.gif'
 import geo from './images/geo_icon.gif'
 import basket from './images/basket.svg'
+import { Badge } from '@mui/material'
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
 export const Header = ({className}) => {
   let navigateTo = useNavigate()  
+  let {basket} = useContext(context)
 
   let [adminEventTest, setAdminEventTest] = useState(false)
   let adminEventTestRef = useRef()
@@ -46,7 +50,10 @@ export const Header = ({className}) => {
           </div>
         </div>
       </div>
-      <img id='basket' onClick={() => navigateTo('/basket')} className={styles.Header__basket} src={basket} alt="" />
+      <Badge badgeContent={basket.reduce((sum, item) => sum += item.quantity, 0)} color='success'>
+        {/* <img id='basket' onClick={() => navigateTo('/basket')} className={styles.Header__basket} src={basket} alt="" /> */}
+        <ShoppingBasketIcon color='action' fontSize="large" id='basket' onClick={() => navigateTo('/basket')} className={styles.Header__basket}/>
+      </Badge>
       {/* id нужен чтобы можно было найти элемент для анимации */}
     </section>
   )

@@ -4,7 +4,7 @@ import styles from './AdminCardSelect.module.scss'
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material'
 
 export const AdminCardSelect = React.forwardRef(({className, cleannessTest, variants, net, property}, ref) => {
-  let netVariantId = net ? variants.filter(variant => variant.id == net[property])[0]['id'] : null
+  let netVariantId = net ? variants.filter(variant => variant[property] == net[property])[0].id : null
   let labels = {
     'length': 'Длина',
     'width': 'Ширина',
